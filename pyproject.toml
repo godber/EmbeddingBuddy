@@ -1,0 +1,14 @@
+[project]
+name = "embeddingbuddy"
+version = "0.1.0"
+description = "A Python Dash application for interactive exploration and visualization of embedding vectors through dimensionality reduction techniques."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dash>=2.17.1",
+    "plotly>=5.17.0",
+    "pandas>=2.1.4",
+    "numpy>=1.24.4",
+    "scikit-learn>=1.3.2",
+    "dash-bootstrap-components>=1.5.0"
+]
