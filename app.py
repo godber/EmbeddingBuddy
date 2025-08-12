@@ -94,7 +94,11 @@ def create_plot(df, dimensions='3d', color_by='category', method='PCA'):
         )
         fig.update_traces(marker=dict(size=8))
     
-    fig.update_layout(height=600)
+    fig.update_layout(
+        height=None,  # Let CSS height control this
+        autosize=True,
+        margin=dict(l=0, r=0, t=50, b=0)
+    )
     return fig
 
 # Layout
@@ -102,12 +106,13 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             html.H1("EmbeddingBuddy", className="text-center mb-4"),
-            html.P("Upload NDJSON file with embeddings to visualize", className="text-center text-muted")
-        ])
+        ], width=12)
     ]),
     
     dbc.Row([
+        # Left sidebar with controls
         dbc.Col([
+            html.H5("Upload Data", className="mb-3"),
             dcc.Upload(
                 id='upload-data',
                 children=html.Div([
@@ -122,15 +127,13 @@ app.layout = dbc.Container([
                     'borderStyle': 'dashed',
                     'borderRadius': '5px',
                     'textAlign': 'center',
-                    'margin': '10px'
+                    'margin-bottom': '20px'
                 },
                 multiple=False
-            )
-        ])
-    ]),
-    
-    dbc.Row([
-        dbc.Col([
+            ),
+            
+            html.H5("Visualization Controls", className="mb-3"),
+            
             dbc.Label("Method:"),
             dcc.Dropdown(
                 id='method-dropdown',
@@ -140,10 +143,9 @@ app.layout = dbc.Container([
                     {'label': 'UMAP', 'value': 'umap'}
                 ],
                 value='pca',
-                style={'margin-bottom': '10px'}
-            )
-        ], width=4),
-        dbc.Col([
+                style={'margin-bottom': '15px'}
+            ),
+            
             dbc.Label("Color by:"),
             dcc.Dropdown(
                 id='color-dropdown',
@@ -153,10 +155,9 @@ app.layout = dbc.Container([
                     {'label': 'Tags', 'value': 'tags'}
                 ],
                 value='category',
-                style={'margin-bottom': '10px'}
-            )
-        ], width=4),
-        dbc.Col([
+                style={'margin-bottom': '15px'}
+            ),
+            
             dbc.Label("Dimensions:"),
             dcc.RadioItems(
                 id='dimension-toggle',
@@ -165,21 +166,22 @@ app.layout = dbc.Container([
                     {'label': '3D', 'value': '3d'}
                 ],
                 value='3d',
-                inline=True
+                style={'margin-bottom': '20px'}
+            ),
+            
+            html.H5("Point Details", className="mb-3"),
+            html.Div(id='point-details', children="Click on a point to see details")
+            
+        ], width=3, style={'padding-right': '20px'}),
+        
+        # Main visualization area
+        dbc.Col([
+            dcc.Graph(
+                id='embedding-plot',
+                style={'height': '85vh', 'width': '100%'},
+                config={'responsive': True, 'displayModeBar': True}
             )
-        ], width=4)
-    ], className="mb-3"),
-    
-    dbc.Row([
-        dbc.Col([
-            dcc.Graph(id='embedding-plot')
-        ])
-    ]),
-    
-    dbc.Row([
-        dbc.Col([
-            html.Div(id='point-details', style={'margin-top': '20px'})
-        ])
+        ], width=9)
     ]),
     
     dcc.Store(id='processed-data')

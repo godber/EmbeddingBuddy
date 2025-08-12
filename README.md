@@ -38,13 +38,14 @@ EmbeddingBuddy accepts newline-delimited JSON (NDJSON) files where each line con
 - `subcategory`: Secondary classification
 - `tags`: Array of string tags for flexible labeling
 
-## Features (Initial Version)
+## Features
 
 - **Drag-and-drop file upload** for NDJSON embedding datasets
-- **PCA dimensionality reduction** (automatically applied)
+- **Multiple dimensionality reduction methods**: PCA, t-SNE, and UMAP
 - **Interactive 2D/3D visualizations** with toggle between views
 - **Color coding options** by category, subcategory, or tags
 - **Point inspection** - click points to view full document content
+- **Sidebar layout** with controls on left, large visualization area on right
 - **Real-time visualization** optimized for small to medium datasets
 
 ## Installation & Usage
@@ -72,5 +73,7 @@ uv run python app.py
 - **Python Dash**: Web application framework
 - **Plotly**: Interactive plotting and visualization
 - **scikit-learn**: PCA implementation
+- **UMAP-learn**: UMAP dimensionality reduction
+- **openTSNE**: Fast t-SNE implementation
 - **NumPy/Pandas**: Data manipulation and analysis
 - **uv**: Modern Python package and project manager
