@@ -52,14 +52,16 @@ EmbeddingBuddy accepts newline-delimited JSON (NDJSON) files where each line con
 This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
 
 1. **Install dependencies:**
-   ```bash
-   uv sync
-   ```
+
+```bash
+uv sync
+```
 
 2. **Run the application:**
-   ```bash
-   uv run python app.py
-   ```
+
+```bash
+uv run python app.py
+```
 
 3. **Open your browser** to http://127.0.0.1:8050
 

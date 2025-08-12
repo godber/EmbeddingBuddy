@@ -53,19 +53,29 @@ def create_plot(df, dimensions='3d', color_by='category'):
     """Create plotly scatter plot."""
     color_values = create_color_mapping(df.to_dict('records'), color_by)
     
+    # Truncate text for hover display
+    df_display = df.copy()
+    df_display['text_preview'] = df_display['text'].apply(lambda x: x[:100] + "..." if len(x) > 100 else x)
+    
+    # Include all metadata fields in hover
+    hover_fields = ['id', 'text_preview', 'category', 'subcategory']
+    # Add tags as a string for hover
+    df_display['tags_str'] = df_display['tags'].apply(lambda x: ', '.join(x) if x else 'None')
+    hover_fields.append('tags_str')
+    
     if dimensions == '3d':
         fig = px.scatter_3d(
-            df, x='pca_1', y='pca_2', z='pca_3',
+            df_display, x='pca_1', y='pca_2', z='pca_3',
             color=color_values,
-            hover_data=['id', 'text'],
+            hover_data=hover_fields,
             title=f'3D Embedding Visualization (colored by {color_by})'
         )
         fig.update_traces(marker=dict(size=5))
     else:
         fig = px.scatter(
-            df, x='pca_1', y='pca_2',
+            df_display, x='pca_1', y='pca_2',
             color=color_values,
-            hover_data=['id', 'text'],
+            hover_data=hover_fields,
             title=f'2D Embedding Visualization (colored by {color_by})'
         )
         fig.update_traces(marker=dict(size=8))
