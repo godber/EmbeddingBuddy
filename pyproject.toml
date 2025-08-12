@@ -10,5 +10,8 @@ dependencies = [
     "pandas>=2.1.4",
     "numpy>=1.24.4",
     "scikit-learn>=1.3.2",
-    "dash-bootstrap-components>=1.5.0"
+    "dash-bootstrap-components>=1.5.0",
+    "umap-learn>=0.5.8",
+    "numba>=0.56.4",
+    "openTSNE>=1.0.0"
 ]
