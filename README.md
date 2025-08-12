@@ -3,6 +3,8 @@
 A Python Dash application for interactive exploration and visualization of
 embedding vectors through dimensionality reduction techniques.
 
+![Screenshot of 3d graph and UI for Embedding Buddy](./embedding-buddy-screenshot.png)
+
 ## Overview
 
 EmbeddingBuddy provides an intuitive web interface for analyzing high-dimensional
