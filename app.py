@@ -259,7 +259,15 @@ def display_click_data(clickData, data):
     if not clickData or not data:
         return "Click on a point to see details"
     
-    point_index = clickData['points'][0]['pointIndex']
+    # Get point index - try different possible keys
+    point_data = clickData['points'][0]
+    if 'pointIndex' in point_data:
+        point_index = point_data['pointIndex']
+    elif 'pointNumber' in point_data:
+        point_index = point_data['pointNumber']
+    else:
+        return "Could not identify clicked point"
+    
     doc = data['documents'][point_index]
     
     return dbc.Card([
