@@ -1,6 +1,6 @@
 # EmbeddingBuddy
 
-A web application for interactive exploration and visualization of embedding
+A modular Python Dash web application for interactive exploration and visualization of embedding
 vectors through dimensionality reduction techniques. Compare documents and prompts
 in the same embedding space to understand semantic relationships.
 
@@ -10,9 +10,10 @@ in the same embedding space to understand semantic relationships.
 
 EmbeddingBuddy provides an intuitive web interface for analyzing high-dimensional
 embedding vectors by applying various dimensionality reduction algorithms and
-visualizing the results in interactive 2D and 3D plots. The application supports
-dual dataset visualization, allowing you to compare documents and prompts to
-understand how queries relate to your content.
+visualizing the results in interactive 2D and 3D plots. The application features
+a clean, modular architecture that makes it easy to test, maintain, and extend
+with new features. It supports dual dataset visualization, allowing you to compare 
+documents and prompts to understand how queries relate to your content.
 
 ## Features
 
@@ -73,7 +74,7 @@ uv sync
 2. **Run the application:**
 
 ```bash
-uv run python app.py
+uv run python main.py
 ```
 
 3. **Open your browser** to http://127.0.0.1:8050
@@ -83,6 +84,59 @@ uv run python app.py
    - Upload `sample_prompts.ndjson` (prompts) to see dual visualization
    - Use the "Show prompts" toggle to compare how prompts relate to documents
 
+## Development
+
+### Project Structure
+
+The application follows a modular architecture for improved maintainability and testability:
+
+```
+src/embeddingbuddy/
+├── config/          # Configuration management
+│   └── settings.py  # Centralized app settings
+├── data/           # Data parsing and processing
+│   ├── parser.py   # NDJSON parsing logic
+│   └── processor.py # Data transformation utilities
+├── models/         # Data schemas and algorithms
+│   ├── schemas.py  # Pydantic data models
+│   └── reducers.py # Dimensionality reduction algorithms
+├── visualization/ # Plot creation and styling
+│   ├── plots.py   # Plot factory and creation logic
+│   └── colors.py  # Color mapping utilities
+├── ui/            # User interface components
+│   ├── layout.py  # Main application layout
+│   ├── components/ # Reusable UI components
+│   └── callbacks/ # Organized callback functions
+└── utils/         # Utility functions
+```
+
+### Testing
+
+Run the test suite to verify functionality:
+
+```bash
+# Install pytest
+uv add pytest
+
+# Run all tests
+uv run pytest tests/ -v
+
+# Run specific test file
+uv run pytest tests/test_data_processing.py -v
+
+# Run with coverage
+uv run pytest tests/ --cov=src/embeddingbuddy
+```
+
+### Adding New Features
+
+The modular architecture makes it easy to extend functionality:
+
+- **New reduction algorithms**: Add to `models/reducers.py`
+- **New plot types**: Extend `visualization/plots.py`
+- **UI components**: Add to `ui/components/`
+- **Configuration options**: Update `config/settings.py`
+
 ## Tech Stack
 
 - **Python Dash**: Web application framework
@@ -91,4 +145,5 @@ uv run python app.py
 - **UMAP-learn**: UMAP dimensionality reduction
 - **openTSNE**: Fast t-SNE implementation
 - **NumPy/Pandas**: Data manipulation and analysis
+- **pytest**: Testing framework
 - **uv**: Modern Python package and project manager
