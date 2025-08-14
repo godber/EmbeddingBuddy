@@ -1,0 +1,8 @@
+{"id": "doc_001", "embedding": "not_an_array", "text": "Embedding as string"}
+{"id": "doc_002", "embedding": [0.1, "text", 0.7, 0.2], "text": "Mixed types in embedding"}
+{"id": "doc_003", "embedding": [], "text": "Empty embedding array"}
+{"id": "doc_004", "embedding": [0.1], "text": "Single dimension embedding"}
+{"id": "doc_005", "embedding": null, "text": "Null embedding"}
+{"id": "doc_006", "embedding": [0.1, 0.2, null, 0.4], "text": "Null value in embedding"}
+{"id": "doc_007", "embedding": [0.1, 0.2, "NaN", 0.4], "text": "String NaN in embedding"}
+{"id": "doc_008", "embedding": [0.1, 0.2, Infinity, 0.4], "text": "Infinity in embedding"}

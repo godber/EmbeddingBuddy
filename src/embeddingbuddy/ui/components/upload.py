@@ -51,3 +51,25 @@ class UploadComponent:
             className="mb-3",
             style={"width": "100%"},
         )
+
+    @staticmethod
+    def create_error_alert():
+        """Create error alert component for data upload issues."""
+        return dbc.Alert(
+            id="upload-error-alert",
+            dismissable=True,
+            is_open=False,
+            color="danger",
+            className="mb-3",
+        )
+
+    @staticmethod
+    def create_success_alert():
+        """Create success alert component for successful uploads."""
+        return dbc.Alert(
+            id="upload-success-alert",
+            dismissable=True,
+            is_open=False,
+            color="success",
+            className="mb-3",
+        )

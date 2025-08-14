@@ -11,14 +11,18 @@ class SidebarComponent:
         return dbc.Col(
             [
                 html.H5("Upload Data", className="mb-3"),
+                self.upload_component.create_error_alert(),
+                self.upload_component.create_success_alert(),
                 self.upload_component.create_data_upload(),
                 self.upload_component.create_prompts_upload(),
                 self.upload_component.create_reset_button(),
                 html.H5("Visualization Controls", className="mb-3"),
-                self._create_method_dropdown(),
-                self._create_color_dropdown(),
-                self._create_dimension_toggle(),
-                self._create_prompts_toggle(),
+            ]
+            + self._create_method_dropdown()
+            + self._create_color_dropdown()
+            + self._create_dimension_toggle()
+            + self._create_prompts_toggle()
+            + [
                 html.H5("Point Details", className="mb-3"),
                 html.Div(
                     id="point-details", children="Click on a point to see details"

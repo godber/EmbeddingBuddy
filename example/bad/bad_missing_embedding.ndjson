@@ -1,0 +1,3 @@
+{"id": "doc_001", "text": "Sample text without embedding field", "category": "test"}
+{"id": "doc_002", "text": "Another text without embedding", "category": "test"}
+{"id": "doc_003", "text": "Third text missing embedding", "category": "test"}
