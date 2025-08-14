@@ -1,0 +1,40 @@
+{"index": {"_index": "embeddings", "_id": "doc_001"}}
+{"id": "doc_001", "embedding": [0.2, -0.1, 0.8, 0.3, -0.5, 0.7, 0.1, -0.3], "text": "Machine learning algorithms are transforming healthcare by enabling predictive analytics and personalized medicine.", "category": "technology", "subcategory": "healthcare", "tags": ["ai", "medicine", "prediction"]}
+{"index": {"_index": "embeddings", "_id": "doc_002"}}
+{"id": "doc_002", "embedding": [0.1, 0.4, -0.2, 0.6, 0.3, -0.4, 0.8, 0.2], "text": "Climate change poses significant challenges to global food security and agricultural sustainability.", "category": "environment", "subcategory": "agriculture", "tags": ["climate", "food", "sustainability"]}
+{"index": {"_index": "embeddings", "_id": "doc_003"}}
+{"id": "doc_003", "embedding": [-0.3, 0.7, 0.1, -0.2, 0.9, 0.4, -0.1, 0.5], "text": "The rise of electric vehicles is reshaping the automotive industry and urban transportation systems.", "category": "technology", "subcategory": "automotive", "tags": ["electric", "transport", "urban"]}
+{"index": {"_index": "embeddings", "_id": "doc_004"}}
+{"id": "doc_004", "embedding": [0.5, -0.6, 0.3, 0.8, -0.2, 0.1, 0.7, -0.4], "text": "Renewable energy sources like solar and wind are becoming increasingly cost-competitive with fossil fuels.", "category": "environment", "subcategory": "energy", "tags": ["renewable", "solar", "wind"]}
+{"index": {"_index": "embeddings", "_id": "doc_005"}}
+{"id": "doc_005", "embedding": [0.8, 0.2, -0.5, 0.1, 0.6, -0.3, 0.4, 0.9], "text": "Financial markets are experiencing volatility due to geopolitical tensions and inflation concerns.", "category": "finance", "subcategory": "markets", "tags": ["volatility", "inflation", "geopolitics"]}
+{"index": {"_index": "embeddings", "_id": "doc_006"}}
+{"id": "doc_006", "embedding": [-0.1, 0.5, 0.7, -0.4, 0.2, 0.8, -0.6, 0.3], "text": "Quantum computing research is advancing rapidly with potential applications in cryptography and drug discovery.", "category": "technology", "subcategory": "research", "tags": ["quantum", "cryptography", "research"]}
+{"index": {"_index": "embeddings", "_id": "doc_007"}}
+{"id": "doc_007", "embedding": [0.4, -0.3, 0.6, 0.7, -0.8, 0.2, 0.5, -0.1], "text": "Ocean pollution from plastic waste is threatening marine ecosystems and biodiversity worldwide.", "category": "environment", "subcategory": "marine", "tags": ["pollution", "plastic", "marine"]}
+{"index": {"_index": "embeddings", "_id": "doc_008"}}
+{"id": "doc_008", "embedding": [0.3, 0.8, -0.2, 0.5, 0.1, -0.7, 0.6, 0.4], "text": "Artificial intelligence is revolutionizing customer service through chatbots and automated support systems.", "category": "technology", "subcategory": "customer_service", "tags": ["ai", "chatbots", "automation"]}
+{"index": {"_index": "embeddings", "_id": "doc_009"}}
+{"id": "doc_009", "embedding": [-0.5, 0.3, 0.9, -0.1, 0.7, 0.4, -0.2, 0.8], "text": "Global supply chains are being redesigned for resilience after pandemic-related disruptions.", "category": "business", "subcategory": "logistics", "tags": ["supply_chain", "pandemic", "resilience"]}
+{"index": {"_index": "embeddings", "_id": "doc_010"}}
+{"id": "doc_010", "embedding": [0.7, -0.4, 0.2, 0.9, -0.3, 0.6, 0.1, -0.8], "text": "Space exploration missions are expanding our understanding of the solar system and potential for life.", "category": "science", "subcategory": "space", "tags": ["space", "exploration", "life"]}
+{"index": {"_index": "embeddings", "_id": "doc_011"}}
+{"id": "doc_011", "embedding": [-0.2, 0.6, 0.4, -0.7, 0.8, 0.3, -0.5, 0.1], "text": "Cryptocurrency adoption is growing among institutional investors despite regulatory uncertainties.", "category": "finance", "subcategory": "crypto", "tags": ["cryptocurrency", "institutional", "regulation"]}
+{"index": {"_index": "embeddings", "_id": "doc_012"}}
+{"id": "doc_012", "embedding": [0.6, 0.1, -0.8, 0.4, 0.5, -0.2, 0.9, -0.3], "text": "Remote work technologies are transforming traditional office environments and work-life balance.", "category": "technology", "subcategory": "workplace", "tags": ["remote", "work", "balance"]}
+{"index": {"_index": "embeddings", "_id": "doc_013"}}
+{"id": "doc_013", "embedding": [0.1, -0.7, 0.5, 0.8, -0.4, 0.3, 0.2, 0.6], "text": "Gene therapy breakthroughs are offering new hope for treating previously incurable genetic diseases.", "category": "science", "subcategory": "medicine", "tags": ["gene_therapy", "genetics", "medicine"]}
+{"index": {"_index": "embeddings", "_id": "doc_014"}}
+{"id": "doc_014", "embedding": [-0.4, 0.2, 0.7, -0.1, 0.9, -0.6, 0.3, 0.5], "text": "Urban planning is evolving to create more sustainable and livable cities for growing populations.", "category": "environment", "subcategory": "urban", "tags": ["urban_planning", "sustainability", "cities"]}
+{"index": {"_index": "embeddings", "_id": "doc_015"}}
+{"id": "doc_015", "embedding": [0.9, -0.1, 0.3, 0.6, -0.5, 0.8, -0.2, 0.4], "text": "Social media platforms are implementing new policies to combat misinformation and protect user privacy.", "category": "technology", "subcategory": "social_media", "tags": ["social_media", "misinformation", "privacy"]}
+{"index": {"_index": "embeddings", "_id": "doc_016"}}
+{"id": "doc_016", "embedding": [-0.3, 0.8, -0.1, 0.4, 0.7, -0.5, 0.6, -0.9], "text": "Educational technology is personalizing learning experiences and improving student outcomes.", "category": "education", "subcategory": "technology", "tags": ["education", "personalization", "technology"]}
+{"index": {"_index": "embeddings", "_id": "doc_017"}}
+{"id": "doc_017", "embedding": [0.5, 0.3, -0.6, 0.2, 0.8, 0.1, -0.4, 0.7], "text": "Biodiversity conservation efforts are critical for maintaining ecosystem balance and preventing species extinction.", "category": "environment", "subcategory": "conservation", "tags": ["biodiversity", "conservation", "extinction"]}
+{"index": {"_index": "embeddings", "_id": "doc_018"}}
+{"id": "doc_018", "embedding": [0.2, -0.8, 0.4, 0.7, -0.1, 0.5, 0.9, -0.3], "text": "Healthcare systems are adopting telemedicine to improve access and reduce costs for patients.", "category": "technology", "subcategory": "healthcare", "tags": ["telemedicine", "healthcare", "access"]}
+{"index": {"_index": "embeddings", "_id": "doc_019"}}
+{"id": "doc_019", "embedding": [-0.7, 0.4, 0.8, -0.2, 0.3, 0.6, -0.1, 0.9], "text": "Autonomous vehicles are being tested extensively with promises of safer and more efficient transportation.", "category": "technology", "subcategory": "automotive", "tags": ["autonomous", "safety", "efficiency"]}
+{"index": {"_index": "embeddings", "_id": "doc_020"}}
+{"id": "doc_020", "embedding": [0.4, 0.7, -0.3, 0.9, -0.6, 0.2, 0.5, -0.1], "text": "Mental health awareness is increasing with new approaches to therapy and workplace wellness programs.", "category": "health", "subcategory": "mental", "tags": ["mental_health", "therapy", "wellness"]}

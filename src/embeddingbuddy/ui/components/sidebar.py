@@ -1,21 +1,22 @@
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from .upload import UploadComponent
+from .datasource import DataSourceComponent
 
 
 class SidebarComponent:
     def __init__(self):
         self.upload_component = UploadComponent()
+        self.datasource_component = DataSourceComponent()
 
     def create_layout(self):
         return dbc.Col(
             [
-                html.H5("Upload Data", className="mb-3"),
-                self.upload_component.create_error_alert(),
-                self.upload_component.create_data_upload(),
-                self.upload_component.create_prompts_upload(),
-                self.upload_component.create_reset_button(),
-                html.H5("Visualization Controls", className="mb-3"),
+                html.H5("Data Sources", className="mb-3"),
+                self.datasource_component.create_error_alert(),
+                self.datasource_component.create_success_alert(),
+                self.datasource_component.create_tabbed_interface(),
+                html.H5("Visualization Controls", className="mb-3 mt-4"),
             ]
             + self._create_method_dropdown()
             + self._create_color_dropdown()
