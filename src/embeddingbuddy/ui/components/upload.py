@@ -62,4 +62,3 @@ class UploadComponent:
             color="danger",
             className="mb-3",
         )
-

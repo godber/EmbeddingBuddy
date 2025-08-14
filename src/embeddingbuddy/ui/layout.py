@@ -9,7 +9,8 @@ class AppLayout:
 
     def create_layout(self):
         return dbc.Container(
-            [self._create_header(), self._create_main_content()] + self._create_stores(),
+            [self._create_header(), self._create_main_content()]
+            + self._create_stores(),
             fluid=True,
         )
 

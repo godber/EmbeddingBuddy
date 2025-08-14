@@ -24,14 +24,10 @@ class NDJSONParser:
                     documents.append(doc)
                 except json.JSONDecodeError as e:
                     raise json.JSONDecodeError(
-                        f"Invalid JSON on line {line_num}: {e.msg}",
-                        e.doc,
-                        e.pos
+                        f"Invalid JSON on line {line_num}: {e.msg}", e.doc, e.pos
                     )
                 except KeyError as e:
-                    raise KeyError(
-                        f"Missing required field {e} on line {line_num}"
-                    )
+                    raise KeyError(f"Missing required field {e} on line {line_num}")
                 except (TypeError, ValueError) as e:
                     raise ValueError(
                         f"Invalid data format on line {line_num}: {str(e)}"
@@ -52,15 +48,19 @@ class NDJSONParser:
         # Validate embedding format
         embedding = doc_dict["embedding"]
         if not isinstance(embedding, list):
-            raise ValueError(f"Embedding must be a list, got {type(embedding).__name__}")
-        
+            raise ValueError(
+                f"Embedding must be a list, got {type(embedding).__name__}"
+            )
+
         if not embedding:
             raise ValueError("Embedding cannot be empty")
-        
+
         # Check that all embedding values are numbers
         for i, val in enumerate(embedding):
             if not isinstance(val, (int, float)) or val != val:  # NaN check
-                raise ValueError(f"Embedding contains invalid value at index {i}: {val}")
+                raise ValueError(
+                    f"Embedding contains invalid value at index {i}: {val}"
+                )
 
         return Document(
             id=doc_dict["id"],

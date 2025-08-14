@@ -25,7 +25,9 @@ class DataProcessingCallbacks:
             processed_data = self.processor.process_upload(contents, filename)
 
             if processed_data.error:
-                error_message = self._format_error_message(processed_data.error, filename)
+                error_message = self._format_error_message(
+                    processed_data.error, filename
+                )
                 return (
                     {"error": processed_data.error},
                     error_message,
@@ -80,14 +82,18 @@ class DataProcessingCallbacks:
     def _format_error_message(error: str, filename: str | None = None) -> str:
         """Format error message with helpful guidance for users."""
         file_part = f" in file '{filename}'" if filename else ""
-        
+
         # Check for common error patterns and provide helpful messages
-        if "embedding" in error.lower() and ("key" in error.lower() or "required field" in error.lower()):
+        if "embedding" in error.lower() and (
+            "key" in error.lower() or "required field" in error.lower()
+        ):
             return (
                 f"❌ Missing 'embedding' field{file_part}. "
                 "Each line must contain an 'embedding' field with a list of numbers."
             )
-        elif "text" in error.lower() and ("key" in error.lower() or "required field" in error.lower()):
+        elif "text" in error.lower() and (
+            "key" in error.lower() or "required field" in error.lower()
+        ):
             return (
                 f"❌ Missing 'text' field{file_part}. "
                 "Each line must contain a 'text' field with the document content."
