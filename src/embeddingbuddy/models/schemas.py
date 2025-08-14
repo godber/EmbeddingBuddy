@@ -1,4 +1,4 @@
-from typing import List, Optional, Any, Dict
+from typing import List, Optional
 from dataclasses import dataclass
 import numpy as np
 
@@ -50,9 +50,11 @@ class PlotData:
     coordinates: np.ndarray
     prompts: Optional[List[Document]] = None
     prompt_coordinates: Optional[np.ndarray] = None
-    
+
     def __post_init__(self):
         if not isinstance(self.coordinates, np.ndarray):
             self.coordinates = np.array(self.coordinates)
-        if self.prompt_coordinates is not None and not isinstance(self.prompt_coordinates, np.ndarray):
+        if self.prompt_coordinates is not None and not isinstance(
+            self.prompt_coordinates, np.ndarray
+        ):
             self.prompt_coordinates = np.array(self.prompt_coordinates)

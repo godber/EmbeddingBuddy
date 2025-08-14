@@ -3,105 +3,100 @@ import os
 
 
 class AppSettings:
-    
     # UI Configuration
     UPLOAD_STYLE = {
-        'width': '100%',
-        'height': '60px',
-        'lineHeight': '60px',
-        'borderWidth': '1px',
-        'borderStyle': 'dashed',
-        'borderRadius': '5px',
-        'textAlign': 'center',
-        'margin-bottom': '20px'
+        "width": "100%",
+        "height": "60px",
+        "lineHeight": "60px",
+        "borderWidth": "1px",
+        "borderStyle": "dashed",
+        "borderRadius": "5px",
+        "textAlign": "center",
+        "margin-bottom": "20px",
     }
-    
-    PROMPTS_UPLOAD_STYLE = {
-        **UPLOAD_STYLE,
-        'borderColor': '#28a745'
-    }
-    
-    PLOT_CONFIG = {
-        'responsive': True,
-        'displayModeBar': True
-    }
-    
-    PLOT_STYLE = {
-        'height': '85vh',
-        'width': '100%'
-    }
-    
+
+    PROMPTS_UPLOAD_STYLE = {**UPLOAD_STYLE, "borderColor": "#28a745"}
+
+    PLOT_CONFIG = {"responsive": True, "displayModeBar": True}
+
+    PLOT_STYLE = {"height": "85vh", "width": "100%"}
+
     PLOT_LAYOUT_CONFIG = {
-        'height': None,
-        'autosize': True,
-        'margin': dict(l=0, r=0, t=50, b=0)
+        "height": None,
+        "autosize": True,
+        "margin": dict(l=0, r=0, t=50, b=0),
     }
-    
+
     # Dimensionality Reduction Settings
     DEFAULT_N_COMPONENTS_3D = 3
     DEFAULT_N_COMPONENTS_2D = 2
     DEFAULT_RANDOM_STATE = 42
-    
+
     # Available Methods
     REDUCTION_METHODS = [
-        {'label': 'PCA', 'value': 'pca'},
-        {'label': 't-SNE', 'value': 'tsne'},
-        {'label': 'UMAP', 'value': 'umap'}
+        {"label": "PCA", "value": "pca"},
+        {"label": "t-SNE", "value": "tsne"},
+        {"label": "UMAP", "value": "umap"},
     ]
-    
+
     COLOR_OPTIONS = [
-        {'label': 'Category', 'value': 'category'},
-        {'label': 'Subcategory', 'value': 'subcategory'},
-        {'label': 'Tags', 'value': 'tags'}
+        {"label": "Category", "value": "category"},
+        {"label": "Subcategory", "value": "subcategory"},
+        {"label": "Tags", "value": "tags"},
     ]
-    
-    DIMENSION_OPTIONS = [
-        {'label': '2D', 'value': '2d'},
-        {'label': '3D', 'value': '3d'}
-    ]
-    
+
+    DIMENSION_OPTIONS = [{"label": "2D", "value": "2d"}, {"label": "3D", "value": "3d"}]
+
     # Default Values
-    DEFAULT_METHOD = 'pca'
-    DEFAULT_COLOR_BY = 'category'
-    DEFAULT_DIMENSIONS = '3d'
-    DEFAULT_SHOW_PROMPTS = ['show']
-    
+    DEFAULT_METHOD = "pca"
+    DEFAULT_COLOR_BY = "category"
+    DEFAULT_DIMENSIONS = "3d"
+    DEFAULT_SHOW_PROMPTS = ["show"]
+
     # Plot Marker Settings
     DOCUMENT_MARKER_SIZE_2D = 8
     DOCUMENT_MARKER_SIZE_3D = 5
     PROMPT_MARKER_SIZE_2D = 10
     PROMPT_MARKER_SIZE_3D = 6
-    
-    DOCUMENT_MARKER_SYMBOL = 'circle'
-    PROMPT_MARKER_SYMBOL = 'diamond'
-    
+
+    DOCUMENT_MARKER_SYMBOL = "circle"
+    PROMPT_MARKER_SYMBOL = "diamond"
+
     DOCUMENT_OPACITY = 1.0
     PROMPT_OPACITY = 0.8
-    
+
     # Text Processing
     TEXT_PREVIEW_LENGTH = 100
-    
+
     # App Configuration
-    DEBUG = os.getenv('EMBEDDINGBUDDY_DEBUG', 'True').lower() == 'true'
-    HOST = os.getenv('EMBEDDINGBUDDY_HOST', '127.0.0.1')
-    PORT = int(os.getenv('EMBEDDINGBUDDY_PORT', '8050'))
-    
+    DEBUG = os.getenv("EMBEDDINGBUDDY_DEBUG", "True").lower() == "true"
+    HOST = os.getenv("EMBEDDINGBUDDY_HOST", "127.0.0.1")
+    PORT = int(os.getenv("EMBEDDINGBUDDY_PORT", "8050"))
+
     # Bootstrap Theme
-    EXTERNAL_STYLESHEETS = ['https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css']
-    
+    EXTERNAL_STYLESHEETS = [
+        "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    ]
+
     @classmethod
-    def get_plot_marker_config(cls, dimensions: str, is_prompt: bool = False) -> Dict[str, Any]:
+    def get_plot_marker_config(
+        cls, dimensions: str, is_prompt: bool = False
+    ) -> Dict[str, Any]:
         if is_prompt:
-            size = cls.PROMPT_MARKER_SIZE_3D if dimensions == '3d' else cls.PROMPT_MARKER_SIZE_2D
+            size = (
+                cls.PROMPT_MARKER_SIZE_3D
+                if dimensions == "3d"
+                else cls.PROMPT_MARKER_SIZE_2D
+            )
             symbol = cls.PROMPT_MARKER_SYMBOL
             opacity = cls.PROMPT_OPACITY
         else:
-            size = cls.DOCUMENT_MARKER_SIZE_3D if dimensions == '3d' else cls.DOCUMENT_MARKER_SIZE_2D
+            size = (
+                cls.DOCUMENT_MARKER_SIZE_3D
+                if dimensions == "3d"
+                else cls.DOCUMENT_MARKER_SIZE_2D
+            )
             symbol = cls.DOCUMENT_MARKER_SYMBOL
             opacity = cls.DOCUMENT_OPACITY
-        
-        return {
-            'size': size,
-            'symbol': symbol,
-            'opacity': opacity
-        }
+
+        return {"size": size, "symbol": symbol, "opacity": opacity}
