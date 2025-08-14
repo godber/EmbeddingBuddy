@@ -13,8 +13,6 @@ class DataProcessingCallbacks:
                 Output("processed-data", "data", allow_duplicate=True),
                 Output("upload-error-alert", "children", allow_duplicate=True),
                 Output("upload-error-alert", "is_open", allow_duplicate=True),
-                Output("upload-success-alert", "children", allow_duplicate=True),
-                Output("upload-success-alert", "is_open", allow_duplicate=True),
             ],
             Input("upload-data", "contents"),
             State("upload-data", "filename"),
@@ -22,7 +20,7 @@ class DataProcessingCallbacks:
         )
         def process_uploaded_file(contents, filename):
             if contents is None:
-                return None, "", False, "", False
+                return None, "", False
 
             processed_data = self.processor.process_upload(contents, filename)
 
@@ -32,11 +30,8 @@ class DataProcessingCallbacks:
                     {"error": processed_data.error},
                     error_message,
                     True,  # Show error alert
-                    "",
-                    False,  # Hide success alert
                 )
 
-            success_message = f"Successfully loaded {len(processed_data.documents)} documents from {filename or 'file'}"
             return (
                 {
                     "documents": [
@@ -46,8 +41,6 @@ class DataProcessingCallbacks:
                 },
                 "",
                 False,  # Hide error alert
-                success_message,
-                True,   # Show success alert
             )
 
         @callback(

@@ -12,7 +12,6 @@ class SidebarComponent:
             [
                 html.H5("Upload Data", className="mb-3"),
                 self.upload_component.create_error_alert(),
-                self.upload_component.create_success_alert(),
                 self.upload_component.create_data_upload(),
                 self.upload_component.create_prompts_upload(),
                 self.upload_component.create_reset_button(),

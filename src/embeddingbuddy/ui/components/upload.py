@@ -63,13 +63,3 @@ class UploadComponent:
             className="mb-3",
         )
 
-    @staticmethod
-    def create_success_alert():
-        """Create success alert component for successful uploads."""
-        return dbc.Alert(
-            id="upload-success-alert",
-            dismissable=True,
-            is_open=False,
-            color="success",
-            className="mb-3",
-        )

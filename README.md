@@ -90,7 +90,7 @@ uv run python main.py
 
 The application follows a modular architecture for improved maintainability and testability:
 
-```
+```text
 src/embeddingbuddy/
 ├── config/          # Configuration management
 │   └── settings.py  # Centralized app settings
