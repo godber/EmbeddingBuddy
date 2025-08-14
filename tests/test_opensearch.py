@@ -117,6 +117,27 @@ class TestFieldMapper:
         assert suggestions["category"][0] in ["category", "type"]  # category-like field should be first
         assert suggestions["tags"][0] == "tags"  # tags field should be first
 
+    def test_suggest_mappings_name_based_embedding(self):
+        """Test that fields named 'embedding' are prioritized even without vector type."""
+        field_analysis = {
+            "vector_fields": [],  # No explicit vector fields detected
+            "text_fields": ["content", "description"],
+            "keyword_fields": ["doc_id", "category", "type", "tags"],
+            "numeric_fields": ["count"],
+            "all_fields": ["content", "description", "doc_id", "category", "embedding", "type", "tags", "count"],
+        }
+
+        suggestions = FieldMapper.suggest_mappings(field_analysis)
+
+        # Check that 'embedding' field is prioritized despite not being detected as vector type
+        assert suggestions["embedding"][0] == "embedding", "Field named 'embedding' should be first priority"
+        
+        # Check that all fields are still available
+        all_fields = ["content", "description", "doc_id", "category", "embedding", "type", "tags", "count"]
+        for field_type in ["embedding", "text", "id", "category", "subcategory", "tags"]:
+            for field in all_fields:
+                assert field in suggestions[field_type], f"Field '{field}' missing from {field_type} suggestions"
+
     def test_validate_mapping_success(self):
         mapping = FieldMapping(
             embedding_field="embedding", text_field="text", id_field="doc_id"

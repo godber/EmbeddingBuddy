@@ -39,139 +39,200 @@ class DataSourceComponent:
         )
 
     def create_opensearch_tab(self):
-        """Create OpenSearch tab content."""
+        """Create OpenSearch tab content with separate Data and Prompts sections."""
         return html.Div(
             [
-                # Connection section
-                html.H6("Connection", className="mb-2"),
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            [
-                                dbc.Label("OpenSearch URL:"),
-                                dbc.Input(
-                                    id="opensearch-url",
-                                    type="text",
-                                    placeholder="https://opensearch.example.com:9200",
-                                    className="mb-2",
-                                ),
-                            ],
-                            width=12,
-                        ),
-                    ]
-                ),
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            [
-                                dbc.Label("Index Name:"),
-                                dbc.Input(
-                                    id="opensearch-index",
-                                    type="text",
-                                    placeholder="my-embeddings-index",
-                                    className="mb-2",
-                                ),
-                            ],
-                            width=6,
-                        ),
-                        dbc.Col(
-                            [
-                                dbc.Button(
-                                    "Test Connection",
-                                    id="test-connection-btn",
-                                    color="primary",
-                                    size="sm",
-                                    className="mt-4",
-                                ),
-                            ],
-                            width=6,
-                            className="d-flex align-items-end",
-                        ),
-                    ]
-                ),
-                # Authentication section (collapsible)
-                dbc.Collapse(
-                    [
-                        html.Hr(),
-                        html.H6("Authentication (Optional)", className="mb-2"),
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    [
-                                        dbc.Label("Username:"),
-                                        dbc.Input(
-                                            id="opensearch-username",
-                                            type="text",
-                                            className="mb-2",
-                                        ),
-                                    ],
-                                    width=6,
-                                ),
-                                dbc.Col(
-                                    [
-                                        dbc.Label("Password:"),
-                                        dbc.Input(
-                                            id="opensearch-password",
-                                            type="password",
-                                            className="mb-2",
-                                        ),
-                                    ],
-                                    width=6,
-                                ),
-                            ]
-                        ),
-                        dbc.Label("OR"),
-                        dbc.Input(
-                            id="opensearch-api-key",
-                            type="text",
-                            placeholder="API Key",
-                            className="mb-2",
-                        ),
-                    ],
-                    id="auth-collapse",
-                    is_open=False,
-                ),
-                dbc.Button(
-                    "Show Authentication",
-                    id="auth-toggle",
-                    color="link",
-                    size="sm",
-                    className="p-0 mb-3",
-                ),
-                # Connection status
-                html.Div(id="connection-status", className="mb-3"),
-                # Field mapping section (hidden initially)
-                html.Div(id="field-mapping-section", style={"display": "none"}),
-                
-                # Hidden dropdowns to prevent callback errors
-                html.Div([
-                    dcc.Dropdown(id="embedding-field-dropdown", style={"display": "none"}),
-                    dcc.Dropdown(id="text-field-dropdown", style={"display": "none"}),
-                    dcc.Dropdown(id="id-field-dropdown", style={"display": "none"}),
-                    dcc.Dropdown(id="category-field-dropdown", style={"display": "none"}),
-                    dcc.Dropdown(id="subcategory-field-dropdown", style={"display": "none"}),
-                    dcc.Dropdown(id="tags-field-dropdown", style={"display": "none"}),
-                ], style={"display": "none"}),
-                # Load data button (hidden initially)
-                html.Div(
-                    [
+                # Data Section
+                dbc.Card([
+                    dbc.CardHeader([
                         dbc.Button(
-                            "Load Data",
-                            id="load-opensearch-data-btn",
-                            color="success",
-                            className="mb-2",
-                            disabled=True,
+                            [
+                                html.I(className="fas fa-chevron-down me-2", id="data-collapse-icon"),
+                                "📄 Documents/Data"
+                            ],
+                            id="data-collapse-toggle",
+                            color="link",
+                            className="text-start p-0 w-100 text-decoration-none",
+                            style={"border": "none", "font-size": "1.25rem", "font-weight": "500"}
                         ),
-                    ],
-                    id="load-data-section",
-                    style={"display": "none"},
-                ),
-                # OpenSearch status/results
-                html.Div(id="opensearch-status", className="mb-3"),
+                    ]),
+                    dbc.Collapse([
+                        dbc.CardBody([
+                            self._create_opensearch_section("data")
+                        ])
+                    ], id="data-collapse", is_open=True)
+                ], className="mb-4"),
+                
+                # Prompts Section
+                dbc.Card([
+                    dbc.CardHeader([
+                        dbc.Button(
+                            [
+                                html.I(className="fas fa-chevron-down me-2", id="prompts-collapse-icon"),
+                                "💬 Prompts"
+                            ],
+                            id="prompts-collapse-toggle",
+                            color="link",
+                            className="text-start p-0 w-100 text-decoration-none",
+                            style={"border": "none", "font-size": "1.25rem", "font-weight": "500"}
+                        ),
+                    ]),
+                    dbc.Collapse([
+                        dbc.CardBody([
+                            self._create_opensearch_section("prompts")
+                        ])
+                    ], id="prompts-collapse", is_open=True)
+                ], className="mb-4"),
+                
+                # Hidden dropdowns to prevent callback errors (for both sections)
+                html.Div([
+                    # Data dropdowns (hidden sync targets)
+                    dcc.Dropdown(id="data-embedding-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="data-text-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="data-id-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="data-category-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="data-subcategory-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="data-tags-field-dropdown", style={"display": "none"}),
+                    # Data UI dropdowns (hidden placeholders)
+                    dcc.Dropdown(id="data-embedding-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="data-text-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="data-id-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="data-category-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="data-subcategory-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="data-tags-field-dropdown-ui", style={"display": "none"}),
+                    # Prompts dropdowns (hidden sync targets)
+                    dcc.Dropdown(id="prompts-embedding-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-text-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-id-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-category-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-subcategory-field-dropdown", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-tags-field-dropdown", style={"display": "none"}),
+                    # Prompts UI dropdowns (hidden placeholders)
+                    dcc.Dropdown(id="prompts-embedding-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-text-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-id-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-category-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-subcategory-field-dropdown-ui", style={"display": "none"}),
+                    dcc.Dropdown(id="prompts-tags-field-dropdown-ui", style={"display": "none"}),
+                ], style={"display": "none"}),
             ]
         )
 
-    def create_field_mapping_interface(self, field_suggestions):
+    def _create_opensearch_section(self, section_type):
+        """Create a complete OpenSearch section for either 'data' or 'prompts'."""
+        section_id = section_type  # 'data' or 'prompts'
+        
+        return html.Div([
+            # Connection section
+            html.H6("Connection", className="mb-2"),
+            dbc.Row([
+                dbc.Col([
+                    dbc.Label("OpenSearch URL:"),
+                    dbc.Input(
+                        id=f"{section_id}-opensearch-url",
+                        type="text",
+                        placeholder="https://opensearch.example.com:9200",
+                        className="mb-2",
+                    ),
+                ], width=12),
+            ]),
+            
+            dbc.Row([
+                dbc.Col([
+                    dbc.Label("Index Name:"),
+                    dbc.Input(
+                        id=f"{section_id}-opensearch-index",
+                        type="text",
+                        placeholder="my-embeddings-index",
+                        className="mb-2",
+                    ),
+                ], width=6),
+                dbc.Col([
+                    dbc.Label("Query Size:"),
+                    dbc.Input(
+                        id=f"{section_id}-opensearch-query-size",
+                        type="number",
+                        value=100,
+                        min=1,
+                        max=1000,
+                        placeholder="100",
+                        className="mb-2",
+                    ),
+                ], width=6),
+            ]),
+            
+            dbc.Row([
+                dbc.Col([
+                    dbc.Button(
+                        "Test Connection",
+                        id=f"{section_id}-test-connection-btn",
+                        color="primary",
+                        className="mb-3",
+                    ),
+                ], width=12),
+            ]),
+            
+            # Authentication section (collapsible)
+            dbc.Collapse([
+                html.Hr(),
+                html.H6("Authentication (Optional)", className="mb-2"),
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Label("Username:"),
+                        dbc.Input(
+                            id=f"{section_id}-opensearch-username",
+                            type="text",
+                            className="mb-2",
+                        ),
+                    ], width=6),
+                    dbc.Col([
+                        dbc.Label("Password:"),
+                        dbc.Input(
+                            id=f"{section_id}-opensearch-password",
+                            type="password",
+                            className="mb-2",
+                        ),
+                    ], width=6),
+                ]),
+                dbc.Label("OR"),
+                dbc.Input(
+                    id=f"{section_id}-opensearch-api-key",
+                    type="text",
+                    placeholder="API Key",
+                    className="mb-2",
+                ),
+            ], id=f"{section_id}-auth-collapse", is_open=False),
+            
+            dbc.Button(
+                "Show Authentication",
+                id=f"{section_id}-auth-toggle",
+                color="link",
+                size="sm",
+                className="p-0 mb-3",
+            ),
+            
+            # Connection status
+            html.Div(id=f"{section_id}-connection-status", className="mb-3"),
+            
+            # Field mapping section (hidden initially)
+            html.Div(id=f"{section_id}-field-mapping-section", style={"display": "none"}),
+            
+            # Load data button (hidden initially)
+            html.Div([
+                dbc.Button(
+                    f"Load {section_type.title()}",
+                    id=f"{section_id}-load-opensearch-data-btn",
+                    color="success",
+                    className="mb-2",
+                    disabled=True,
+                ),
+            ], id=f"{section_id}-load-data-section", style={"display": "none"}),
+            
+            # OpenSearch status/results
+            html.Div(id=f"{section_id}-opensearch-status", className="mb-3"),
+        ])
+
+    def create_field_mapping_interface(self, field_suggestions, section_type="data"):
         """Create field mapping interface based on detected fields."""
         return html.Div(
             [
@@ -190,7 +251,7 @@ class DataSourceComponent:
                                     "Embedding Field (required):", className="fw-bold"
                                 ),
                                 dcc.Dropdown(
-                                    id="embedding-field-dropdown-ui",
+                                    id=f"{section_type}-embedding-field-dropdown-ui",
                                     options=[
                                         {"label": field, "value": field}
                                         for field in field_suggestions.get("embedding", [])
@@ -208,7 +269,7 @@ class DataSourceComponent:
                                     "Text Field (required):", className="fw-bold"
                                 ),
                                 dcc.Dropdown(
-                                    id="text-field-dropdown-ui",
+                                    id=f"{section_type}-text-field-dropdown-ui",
                                     options=[
                                         {"label": field, "value": field}
                                         for field in field_suggestions.get("text", [])
@@ -230,7 +291,7 @@ class DataSourceComponent:
                             [
                                 dbc.Label("ID Field:"),
                                 dcc.Dropdown(
-                                    id="id-field-dropdown-ui",
+                                    id=f"{section_type}-id-field-dropdown-ui",
                                     options=[
                                         {"label": field, "value": field}
                                         for field in field_suggestions.get("id", [])
@@ -246,7 +307,7 @@ class DataSourceComponent:
                             [
                                 dbc.Label("Category Field:"),
                                 dcc.Dropdown(
-                                    id="category-field-dropdown-ui",
+                                    id=f"{section_type}-category-field-dropdown-ui",
                                     options=[
                                         {"label": field, "value": field}
                                         for field in field_suggestions.get("category", [])
@@ -266,7 +327,7 @@ class DataSourceComponent:
                             [
                                 dbc.Label("Subcategory Field:"),
                                 dcc.Dropdown(
-                                    id="subcategory-field-dropdown-ui",
+                                    id=f"{section_type}-subcategory-field-dropdown-ui",
                                     options=[
                                         {"label": field, "value": field}
                                         for field in field_suggestions.get("subcategory", [])
@@ -282,7 +343,7 @@ class DataSourceComponent:
                             [
                                 dbc.Label("Tags Field:"),
                                 dcc.Dropdown(
-                                    id="tags-field-dropdown-ui",
+                                    id=f"{section_type}-tags-field-dropdown-ui",
                                     options=[
                                         {"label": field, "value": field}
                                         for field in field_suggestions.get("tags", [])

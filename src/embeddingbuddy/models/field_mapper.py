@@ -39,7 +39,6 @@ class FieldMapper:
         vector_fields = [vf["name"] for vf in field_analysis.get("vector_fields", [])]
         text_fields = field_analysis.get("text_fields", [])
         keyword_fields = field_analysis.get("keyword_fields", [])
-        numeric_fields = field_analysis.get("numeric_fields", [])
 
         # Helper function to create ordered suggestions
         def create_ordered_suggestions(primary_candidates, all_available_fields):
@@ -57,8 +56,16 @@ class FieldMapper:
 
         suggestions = {}
 
-        # Embedding field suggestions (vector fields first, then all fields)
+        # Embedding field suggestions (vector fields first, then name-based candidates, then all fields)
         embedding_candidates = vector_fields.copy()
+        # Add fields that likely contain embeddings based on name
+        embedding_name_candidates = [f for f in all_fields if any(
+            keyword in f.lower() for keyword in ["embedding", "embeddings", "vector", "vectors", "embed"]
+        )]
+        # Add name-based candidates that aren't already in vector_fields
+        for candidate in embedding_name_candidates:
+            if candidate not in embedding_candidates:
+                embedding_candidates.append(candidate)
         suggestions["embedding"] = create_ordered_suggestions(embedding_candidates, all_fields)
 
         # Text field suggestions (text fields first, then all fields)

@@ -8,7 +8,8 @@ from ...config.settings import AppSettings
 class DataProcessingCallbacks:
     def __init__(self):
         self.processor = DataProcessor()
-        self.opensearch_client = OpenSearchClient()
+        self.opensearch_client_data = OpenSearchClient()  # For data/documents
+        self.opensearch_client_prompts = OpenSearchClient()  # For prompts
         self._register_callbacks()
 
     def _register_callbacks(self):
@@ -89,10 +90,21 @@ class DataProcessingCallbacks:
             else:
                 return [datasource.create_file_upload_tab()]
 
+        # Register callbacks for both data and prompts sections
+        self._register_opensearch_callbacks("data", self.opensearch_client_data)
+        self._register_opensearch_callbacks("prompts", self.opensearch_client_prompts)
+
+        # Register collapsible section callbacks
+        self._register_collapse_callbacks()
+
+
+    def _register_opensearch_callbacks(self, section_type, opensearch_client):
+        """Register callbacks for a specific section (data or prompts)."""
+        
         @callback(
-            Output("auth-collapse", "is_open"),
-            [Input("auth-toggle", "n_clicks")],
-            [State("auth-collapse", "is_open")],
+            Output(f"{section_type}-auth-collapse", "is_open"),
+            [Input(f"{section_type}-auth-toggle", "n_clicks")],
+            [State(f"{section_type}-auth-collapse", "is_open")],
             prevent_initial_call=True,
         )
         def toggle_auth(n_clicks, is_open):
@@ -101,8 +113,8 @@ class DataProcessingCallbacks:
             return is_open
 
         @callback(
-            Output("auth-toggle", "children"),
-            [Input("auth-collapse", "is_open")],
+            Output(f"{section_type}-auth-toggle", "children"),
+            [Input(f"{section_type}-auth-collapse", "is_open")],
             prevent_initial_call=False,
         )
         def update_auth_button_text(is_open):
@@ -110,36 +122,34 @@ class DataProcessingCallbacks:
 
         @callback(
             [
-                Output("connection-status", "children"),
-                Output("field-mapping-section", "children"),
-                Output("field-mapping-section", "style"),
-                Output("load-data-section", "style"),
-                Output("load-opensearch-data-btn", "disabled"),
-                Output("embedding-field-dropdown", "options"),
-                Output("text-field-dropdown", "options"),
-                Output("id-field-dropdown", "options"),
-                Output("category-field-dropdown", "options"),
-                Output("subcategory-field-dropdown", "options"),
-                Output("tags-field-dropdown", "options"),
+                Output(f"{section_type}-connection-status", "children"),
+                Output(f"{section_type}-field-mapping-section", "children"),
+                Output(f"{section_type}-field-mapping-section", "style"),
+                Output(f"{section_type}-load-data-section", "style"),
+                Output(f"{section_type}-load-opensearch-data-btn", "disabled"),
+                Output(f"{section_type}-embedding-field-dropdown", "options"),
+                Output(f"{section_type}-text-field-dropdown", "options"),
+                Output(f"{section_type}-id-field-dropdown", "options"),
+                Output(f"{section_type}-category-field-dropdown", "options"),
+                Output(f"{section_type}-subcategory-field-dropdown", "options"),
+                Output(f"{section_type}-tags-field-dropdown", "options"),
             ],
-            [Input("test-connection-btn", "n_clicks")],
+            [Input(f"{section_type}-test-connection-btn", "n_clicks")],
             [
-                State("opensearch-url", "value"),
-                State("opensearch-index", "value"),
-                State("opensearch-username", "value"),
-                State("opensearch-password", "value"),
-                State("opensearch-api-key", "value"),
+                State(f"{section_type}-opensearch-url", "value"),
+                State(f"{section_type}-opensearch-index", "value"),
+                State(f"{section_type}-opensearch-username", "value"),
+                State(f"{section_type}-opensearch-password", "value"),
+                State(f"{section_type}-opensearch-api-key", "value"),
             ],
             prevent_initial_call=True,
         )
-        def test_opensearch_connection(
-            n_clicks, url, index_name, username, password, api_key
-        ):
+        def test_opensearch_connection(n_clicks, url, index_name, username, password, api_key):
             if not n_clicks or not url or not index_name:
                 return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update
 
             # Test connection
-            success, message = self.opensearch_client.connect(
+            success, message = opensearch_client.connect(
                 url=url,
                 username=username,
                 password=password,
@@ -163,9 +173,7 @@ class DataProcessingCallbacks:
                 )
 
             # Analyze fields
-            success, field_analysis, analysis_message = (
-                self.opensearch_client.analyze_fields(index_name)
-            )
+            success, field_analysis, analysis_message = opensearch_client.analyze_fields(index_name)
 
             if not success:
                 return (
@@ -186,11 +194,8 @@ class DataProcessingCallbacks:
             field_suggestions = FieldMapper.suggest_mappings(field_analysis)
 
             from ...ui.components.datasource import DataSourceComponent
-
             datasource = DataSourceComponent()
-            field_mapping_ui = datasource.create_field_mapping_interface(
-                field_suggestions
-            )
+            field_mapping_ui = datasource.create_field_mapping_interface(field_suggestions, section_type)
 
             return (
                 self._create_status_alert(f"✅ {message}", "success"),
@@ -206,55 +211,55 @@ class DataProcessingCallbacks:
                 [{"label": field, "value": field} for field in field_suggestions.get("tags", [])],
             )
 
+        # Determine output target based on section type
+        output_target = "processed-data" if section_type == "data" else "processed-prompts"
+
         @callback(
             [
-                Output("processed-data", "data", allow_duplicate=True),
+                Output(output_target, "data", allow_duplicate=True),
                 Output("opensearch-success-alert", "children", allow_duplicate=True),
                 Output("opensearch-success-alert", "is_open", allow_duplicate=True),
                 Output("opensearch-error-alert", "children", allow_duplicate=True),
                 Output("opensearch-error-alert", "is_open", allow_duplicate=True),
             ],
-            [Input("load-opensearch-data-btn", "n_clicks")],
+            [Input(f"{section_type}-load-opensearch-data-btn", "n_clicks")],
             [
-                State("opensearch-index", "value"),
-                State("embedding-field-dropdown", "value"),
-                State("text-field-dropdown", "value"),
-                State("id-field-dropdown", "value"),
-                State("category-field-dropdown", "value"),
-                State("subcategory-field-dropdown", "value"),
-                State("tags-field-dropdown", "value"),
+                State(f"{section_type}-opensearch-index", "value"),
+                State(f"{section_type}-opensearch-query-size", "value"),
+                State(f"{section_type}-embedding-field-dropdown-ui", "value"),
+                State(f"{section_type}-text-field-dropdown-ui", "value"),
+                State(f"{section_type}-id-field-dropdown-ui", "value"),
+                State(f"{section_type}-category-field-dropdown-ui", "value"),
+                State(f"{section_type}-subcategory-field-dropdown-ui", "value"),
+                State(f"{section_type}-tags-field-dropdown-ui", "value"),
             ],
             prevent_initial_call=True,
         )
-        def load_opensearch_data(
-            n_clicks,
-            index_name,
-            embedding_field,
-            text_field,
-            id_field,
-            category_field,
-            subcategory_field,
-            tags_field,
-        ):
+        def load_opensearch_data(n_clicks, index_name, query_size, embedding_field, text_field, 
+                                id_field, category_field, subcategory_field, tags_field):
             if not n_clicks or not index_name or not embedding_field or not text_field:
                 return no_update, no_update, no_update, no_update, no_update
 
             try:
+                # Validate and set query size
+                if not query_size or query_size < 1:
+                    query_size = AppSettings.OPENSEARCH_DEFAULT_SIZE
+                elif query_size > 1000:
+                    query_size = 1000  # Cap at reasonable maximum
+
                 # Create field mapping
-                field_mapping = FieldMapper.create_mapping_from_dict(
-                    {
-                        "embedding": embedding_field,
-                        "text": text_field,
-                        "id": id_field,
-                        "category": category_field,
-                        "subcategory": subcategory_field,
-                        "tags": tags_field,
-                    }
-                )
+                field_mapping = FieldMapper.create_mapping_from_dict({
+                    "embedding": embedding_field,
+                    "text": text_field,
+                    "id": id_field,
+                    "category": category_field,
+                    "subcategory": subcategory_field,
+                    "tags": tags_field
+                })
 
                 # Fetch data from OpenSearch
-                success, raw_documents, message = self.opensearch_client.fetch_data(
-                    index_name, size=AppSettings.OPENSEARCH_DEFAULT_SIZE
+                success, raw_documents, message = opensearch_client.fetch_data(
+                    index_name, size=query_size
                 )
 
                 if not success:
@@ -262,91 +267,140 @@ class DataProcessingCallbacks:
                         no_update,
                         "",
                         False,
-                        f"❌ Failed to fetch data: {message}",
-                        True,
+                        f"❌ Failed to fetch {section_type}: {message}",
+                        True
                     )
 
                 # Process the data
-                processed_data = self.processor.process_opensearch_data(
-                    raw_documents, field_mapping
-                )
+                processed_data = self.processor.process_opensearch_data(raw_documents, field_mapping)
 
                 if processed_data.error:
                     return (
                         {"error": processed_data.error},
                         "",
                         False,
-                        f"❌ Data processing error: {processed_data.error}",
-                        True,
+                        f"❌ {section_type.title()} processing error: {processed_data.error}",
+                        True
                     )
 
-                success_message = f"✅ Successfully loaded {len(processed_data.documents)} documents from OpenSearch"
+                success_message = f"✅ Successfully loaded {len(processed_data.documents)} {section_type} from OpenSearch"
 
-                return (
-                    {
-                        "documents": [
-                            self._document_to_dict(doc)
-                            for doc in processed_data.documents
-                        ],
-                        "embeddings": processed_data.embeddings.tolist(),
-                    },
-                    success_message,
-                    True,
-                    "",
-                    False,
-                )
+                # Format for appropriate target (data vs prompts)
+                if section_type == "data":
+                    return (
+                        {
+                            "documents": [
+                                self._document_to_dict(doc) for doc in processed_data.documents
+                            ],
+                            "embeddings": processed_data.embeddings.tolist(),
+                        },
+                        success_message,
+                        True,
+                        "",
+                        False
+                    )
+                else:  # prompts
+                    return (
+                        {
+                            "prompts": [
+                                self._document_to_dict(doc) for doc in processed_data.documents
+                            ],
+                            "embeddings": processed_data.embeddings.tolist(),
+                        },
+                        success_message,
+                        True,
+                        "",
+                        False
+                    )
 
             except Exception as e:
                 return (no_update, "", False, f"❌ Unexpected error: {str(e)}", True)
 
         # Sync callbacks to update hidden dropdowns from UI dropdowns
         @callback(
-            Output("embedding-field-dropdown", "value"),
-            Input("embedding-field-dropdown-ui", "value"),
+            Output(f"{section_type}-embedding-field-dropdown", "value"),
+            Input(f"{section_type}-embedding-field-dropdown-ui", "value"),
             prevent_initial_call=True,
         )
         def sync_embedding_dropdown(value):
             return value
 
         @callback(
-            Output("text-field-dropdown", "value"),
-            Input("text-field-dropdown-ui", "value"),
+            Output(f"{section_type}-text-field-dropdown", "value"),
+            Input(f"{section_type}-text-field-dropdown-ui", "value"),
             prevent_initial_call=True,
         )
         def sync_text_dropdown(value):
             return value
 
         @callback(
-            Output("id-field-dropdown", "value"),
-            Input("id-field-dropdown-ui", "value"),
+            Output(f"{section_type}-id-field-dropdown", "value"),
+            Input(f"{section_type}-id-field-dropdown-ui", "value"),
             prevent_initial_call=True,
         )
         def sync_id_dropdown(value):
             return value
 
         @callback(
-            Output("category-field-dropdown", "value"),
-            Input("category-field-dropdown-ui", "value"),
+            Output(f"{section_type}-category-field-dropdown", "value"),
+            Input(f"{section_type}-category-field-dropdown-ui", "value"),
             prevent_initial_call=True,
         )
         def sync_category_dropdown(value):
             return value
 
         @callback(
-            Output("subcategory-field-dropdown", "value"),
-            Input("subcategory-field-dropdown-ui", "value"),
+            Output(f"{section_type}-subcategory-field-dropdown", "value"),
+            Input(f"{section_type}-subcategory-field-dropdown-ui", "value"),
             prevent_initial_call=True,
         )
         def sync_subcategory_dropdown(value):
             return value
 
         @callback(
-            Output("tags-field-dropdown", "value"),
-            Input("tags-field-dropdown-ui", "value"),
+            Output(f"{section_type}-tags-field-dropdown", "value"),
+            Input(f"{section_type}-tags-field-dropdown-ui", "value"),
             prevent_initial_call=True,
         )
         def sync_tags_dropdown(value):
             return value
+
+    def _register_collapse_callbacks(self):
+        """Register callbacks for collapsible sections."""
+        
+        # Data section collapse callback
+        @callback(
+            [
+                Output("data-collapse", "is_open"),
+                Output("data-collapse-icon", "className"),
+            ],
+            [Input("data-collapse-toggle", "n_clicks")],
+            [State("data-collapse", "is_open")],
+            prevent_initial_call=True,
+        )
+        def toggle_data_collapse(n_clicks, is_open):
+            if n_clicks:
+                new_state = not is_open
+                icon_class = "fas fa-chevron-down me-2" if new_state else "fas fa-chevron-right me-2"
+                return new_state, icon_class
+            return is_open, "fas fa-chevron-down me-2"
+
+        # Prompts section collapse callback
+        @callback(
+            [
+                Output("prompts-collapse", "is_open"),
+                Output("prompts-collapse-icon", "className"),
+            ],
+            [Input("prompts-collapse-toggle", "n_clicks")],
+            [State("prompts-collapse", "is_open")],
+            prevent_initial_call=True,
+        )
+        def toggle_prompts_collapse(n_clicks, is_open):
+            if n_clicks:
+                new_state = not is_open
+                icon_class = "fas fa-chevron-down me-2" if new_state else "fas fa-chevron-right me-2"
+                return new_state, icon_class
+            return is_open, "fas fa-chevron-down me-2"
 
     @staticmethod
     def _document_to_dict(doc):
