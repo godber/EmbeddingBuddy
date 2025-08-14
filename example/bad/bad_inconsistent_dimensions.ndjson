@@ -1,0 +1,4 @@
+{"id": "doc_001", "embedding": [0.1, -0.3, 0.7, 0.2], "text": "4D embedding"}
+{"id": "doc_002", "embedding": [0.5, 0.1, -0.2], "text": "3D embedding"}
+{"id": "doc_003", "embedding": [0.3, 0.4, 0.1, -0.1, 0.8], "text": "5D embedding"}
+{"id": "doc_004", "embedding": [0.2, 0.1], "text": "2D embedding"}

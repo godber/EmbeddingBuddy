@@ -1,0 +1,4 @@
+[
+  {"id": "doc_001", "embedding": [0.1, -0.3, 0.7, 0.2], "text": "Regular JSON array"},
+  {"id": "doc_002", "embedding": [0.5, 0.1, -0.2, 0.8], "text": "Instead of NDJSON"}
+]

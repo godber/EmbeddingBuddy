@@ -90,7 +90,7 @@ uv run python main.py
 
 The application follows a modular architecture for improved maintainability and testability:
 
-```
+```text
 src/embeddingbuddy/
 ├── config/          # Configuration management
 │   └── settings.py  # Centralized app settings
@@ -115,8 +115,8 @@ src/embeddingbuddy/
 Run the test suite to verify functionality:
 
 ```bash
-# Install pytest
-uv add pytest
+# Install test dependencies
+uv sync --extra test
 
 # Run all tests
 uv run pytest tests/ -v
@@ -126,6 +126,31 @@ uv run pytest tests/test_data_processing.py -v
 
 # Run with coverage
 uv run pytest tests/ --cov=src/embeddingbuddy
+```
+
+### Development Tools
+
+Install development dependencies for linting, type checking, and security:
+
+```bash
+# Install all dev dependencies
+uv sync --extra dev
+
+# Or install specific groups
+uv sync --extra test        # Testing tools
+uv sync --extra lint        # Linting and formatting
+uv sync --extra security    # Security scanning tools
+
+# Run linting
+uv run ruff check src/ tests/
+uv run ruff format src/ tests/
+
+# Run type checking
+uv run mypy src/embeddingbuddy/
+
+# Run security scans
+uv run bandit -r src/
+uv run safety check
 ```
 
 ### Adding New Features
