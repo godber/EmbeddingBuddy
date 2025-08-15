@@ -97,10 +97,9 @@ class DataProcessingCallbacks:
         # Register collapsible section callbacks
         self._register_collapse_callbacks()
 
-
     def _register_opensearch_callbacks(self, section_type, opensearch_client):
         """Register callbacks for a specific section (data or prompts)."""
-        
+
         @callback(
             Output(f"{section_type}-auth-collapse", "is_open"),
             [Input(f"{section_type}-auth-toggle", "n_clicks")],
@@ -144,9 +143,23 @@ class DataProcessingCallbacks:
             ],
             prevent_initial_call=True,
         )
-        def test_opensearch_connection(n_clicks, url, index_name, username, password, api_key):
+        def test_opensearch_connection(
+            n_clicks, url, index_name, username, password, api_key
+        ):
             if not n_clicks or not url or not index_name:
-                return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update
+                return (
+                    no_update,
+                    no_update,
+                    no_update,
+                    no_update,
+                    no_update,
+                    no_update,
+                    no_update,
+                    no_update,
+                    no_update,
+                    no_update,
+                    no_update,
+                )
 
             # Test connection
             success, message = opensearch_client.connect(
@@ -173,7 +186,9 @@ class DataProcessingCallbacks:
                 )
 
             # Analyze fields
-            success, field_analysis, analysis_message = opensearch_client.analyze_fields(index_name)
+            success, field_analysis, analysis_message = (
+                opensearch_client.analyze_fields(index_name)
+            )
 
             if not success:
                 return (
@@ -194,8 +209,11 @@ class DataProcessingCallbacks:
             field_suggestions = FieldMapper.suggest_mappings(field_analysis)
 
             from ...ui.components.datasource import DataSourceComponent
+
             datasource = DataSourceComponent()
-            field_mapping_ui = datasource.create_field_mapping_interface(field_suggestions, section_type)
+            field_mapping_ui = datasource.create_field_mapping_interface(
+                field_suggestions, section_type
+            )
 
             return (
                 self._create_status_alert(f"✅ {message}", "success"),
@@ -203,16 +221,36 @@ class DataProcessingCallbacks:
                 {"display": "block"},
                 {"display": "block"},
                 False,
-                [{"label": field, "value": field} for field in field_suggestions.get("embedding", [])],
-                [{"label": field, "value": field} for field in field_suggestions.get("text", [])],
-                [{"label": field, "value": field} for field in field_suggestions.get("id", [])],
-                [{"label": field, "value": field} for field in field_suggestions.get("category", [])],
-                [{"label": field, "value": field} for field in field_suggestions.get("subcategory", [])],
-                [{"label": field, "value": field} for field in field_suggestions.get("tags", [])],
+                [
+                    {"label": field, "value": field}
+                    for field in field_suggestions.get("embedding", [])
+                ],
+                [
+                    {"label": field, "value": field}
+                    for field in field_suggestions.get("text", [])
+                ],
+                [
+                    {"label": field, "value": field}
+                    for field in field_suggestions.get("id", [])
+                ],
+                [
+                    {"label": field, "value": field}
+                    for field in field_suggestions.get("category", [])
+                ],
+                [
+                    {"label": field, "value": field}
+                    for field in field_suggestions.get("subcategory", [])
+                ],
+                [
+                    {"label": field, "value": field}
+                    for field in field_suggestions.get("tags", [])
+                ],
             )
 
         # Determine output target based on section type
-        output_target = "processed-data" if section_type == "data" else "processed-prompts"
+        output_target = (
+            "processed-data" if section_type == "data" else "processed-prompts"
+        )
 
         @callback(
             [
@@ -235,8 +273,17 @@ class DataProcessingCallbacks:
             ],
             prevent_initial_call=True,
         )
-        def load_opensearch_data(n_clicks, index_name, query_size, embedding_field, text_field, 
-                                id_field, category_field, subcategory_field, tags_field):
+        def load_opensearch_data(
+            n_clicks,
+            index_name,
+            query_size,
+            embedding_field,
+            text_field,
+            id_field,
+            category_field,
+            subcategory_field,
+            tags_field,
+        ):
             if not n_clicks or not index_name or not embedding_field or not text_field:
                 return no_update, no_update, no_update, no_update, no_update
 
@@ -248,14 +295,16 @@ class DataProcessingCallbacks:
                     query_size = 1000  # Cap at reasonable maximum
 
                 # Create field mapping
-                field_mapping = FieldMapper.create_mapping_from_dict({
-                    "embedding": embedding_field,
-                    "text": text_field,
-                    "id": id_field,
-                    "category": category_field,
-                    "subcategory": subcategory_field,
-                    "tags": tags_field
-                })
+                field_mapping = FieldMapper.create_mapping_from_dict(
+                    {
+                        "embedding": embedding_field,
+                        "text": text_field,
+                        "id": id_field,
+                        "category": category_field,
+                        "subcategory": subcategory_field,
+                        "tags": tags_field,
+                    }
+                )
 
                 # Fetch data from OpenSearch
                 success, raw_documents, message = opensearch_client.fetch_data(
@@ -268,11 +317,13 @@ class DataProcessingCallbacks:
                         "",
                         False,
                         f"❌ Failed to fetch {section_type}: {message}",
-                        True
+                        True,
                     )
 
                 # Process the data
-                processed_data = self.processor.process_opensearch_data(raw_documents, field_mapping)
+                processed_data = self.processor.process_opensearch_data(
+                    raw_documents, field_mapping
+                )
 
                 if processed_data.error:
                     return (
@@ -280,7 +331,7 @@ class DataProcessingCallbacks:
                         "",
                         False,
                         f"❌ {section_type.title()} processing error: {processed_data.error}",
-                        True
+                        True,
                     )
 
                 success_message = f"✅ Successfully loaded {len(processed_data.documents)} {section_type} from OpenSearch"
@@ -290,27 +341,29 @@ class DataProcessingCallbacks:
                     return (
                         {
                             "documents": [
-                                self._document_to_dict(doc) for doc in processed_data.documents
+                                self._document_to_dict(doc)
+                                for doc in processed_data.documents
                             ],
                             "embeddings": processed_data.embeddings.tolist(),
                         },
                         success_message,
                         True,
                         "",
-                        False
+                        False,
                     )
                 else:  # prompts
                     return (
                         {
                             "prompts": [
-                                self._document_to_dict(doc) for doc in processed_data.documents
+                                self._document_to_dict(doc)
+                                for doc in processed_data.documents
                             ],
                             "embeddings": processed_data.embeddings.tolist(),
                         },
                         success_message,
                         True,
                         "",
-                        False
+                        False,
                     )
 
             except Exception as e:
@@ -367,7 +420,7 @@ class DataProcessingCallbacks:
 
     def _register_collapse_callbacks(self):
         """Register callbacks for collapsible sections."""
-        
+
         # Data section collapse callback
         @callback(
             [
@@ -381,7 +434,11 @@ class DataProcessingCallbacks:
         def toggle_data_collapse(n_clicks, is_open):
             if n_clicks:
                 new_state = not is_open
-                icon_class = "fas fa-chevron-down me-2" if new_state else "fas fa-chevron-right me-2"
+                icon_class = (
+                    "fas fa-chevron-down me-2"
+                    if new_state
+                    else "fas fa-chevron-right me-2"
+                )
                 return new_state, icon_class
             return is_open, "fas fa-chevron-down me-2"
 
@@ -398,7 +455,11 @@ class DataProcessingCallbacks:
         def toggle_prompts_collapse(n_clicks, is_open):
             if n_clicks:
                 new_state = not is_open
-                icon_class = "fas fa-chevron-down me-2" if new_state else "fas fa-chevron-right me-2"
+                icon_class = (
+                    "fas fa-chevron-down me-2"
+                    if new_state
+                    else "fas fa-chevron-right me-2"
+                )
                 return new_state, icon_class
             return is_open, "fas fa-chevron-down me-2"
 

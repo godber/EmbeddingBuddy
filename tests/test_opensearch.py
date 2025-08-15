@@ -99,22 +99,57 @@ class TestFieldMapper:
             "text_fields": ["content", "description"],
             "keyword_fields": ["doc_id", "category", "type", "tags"],
             "numeric_fields": ["count"],
-            "all_fields": ["embedding", "content", "description", "doc_id", "category", "type", "tags", "count"],
+            "all_fields": [
+                "embedding",
+                "content",
+                "description",
+                "doc_id",
+                "category",
+                "type",
+                "tags",
+                "count",
+            ],
         }
 
         suggestions = FieldMapper.suggest_mappings(field_analysis)
 
         # Check that all dropdowns contain all fields
-        all_fields = ["embedding", "content", "description", "doc_id", "category", "type", "tags", "count"]
-        for field_type in ["embedding", "text", "id", "category", "subcategory", "tags"]:
+        all_fields = [
+            "embedding",
+            "content",
+            "description",
+            "doc_id",
+            "category",
+            "type",
+            "tags",
+            "count",
+        ]
+        for field_type in [
+            "embedding",
+            "text",
+            "id",
+            "category",
+            "subcategory",
+            "tags",
+        ]:
             for field in all_fields:
-                assert field in suggestions[field_type], f"Field '{field}' missing from {field_type} suggestions"
+                assert field in suggestions[field_type], (
+                    f"Field '{field}' missing from {field_type} suggestions"
+                )
 
         # Check that best candidates are first
-        assert suggestions["embedding"][0] == "embedding"  # vector field should be first
-        assert suggestions["text"][0] in ["content", "description"]  # text fields should be first
+        assert (
+            suggestions["embedding"][0] == "embedding"
+        )  # vector field should be first
+        assert suggestions["text"][0] in [
+            "content",
+            "description",
+        ]  # text fields should be first
         assert suggestions["id"][0] == "doc_id"  # ID-like field should be first
-        assert suggestions["category"][0] in ["category", "type"]  # category-like field should be first
+        assert suggestions["category"][0] in [
+            "category",
+            "type",
+        ]  # category-like field should be first
         assert suggestions["tags"][0] == "tags"  # tags field should be first
 
     def test_suggest_mappings_name_based_embedding(self):
@@ -124,19 +159,48 @@ class TestFieldMapper:
             "text_fields": ["content", "description"],
             "keyword_fields": ["doc_id", "category", "type", "tags"],
             "numeric_fields": ["count"],
-            "all_fields": ["content", "description", "doc_id", "category", "embedding", "type", "tags", "count"],
+            "all_fields": [
+                "content",
+                "description",
+                "doc_id",
+                "category",
+                "embedding",
+                "type",
+                "tags",
+                "count",
+            ],
         }
 
         suggestions = FieldMapper.suggest_mappings(field_analysis)
 
         # Check that 'embedding' field is prioritized despite not being detected as vector type
-        assert suggestions["embedding"][0] == "embedding", "Field named 'embedding' should be first priority"
-        
+        assert suggestions["embedding"][0] == "embedding", (
+            "Field named 'embedding' should be first priority"
+        )
+
         # Check that all fields are still available
-        all_fields = ["content", "description", "doc_id", "category", "embedding", "type", "tags", "count"]
-        for field_type in ["embedding", "text", "id", "category", "subcategory", "tags"]:
+        all_fields = [
+            "content",
+            "description",
+            "doc_id",
+            "category",
+            "embedding",
+            "type",
+            "tags",
+            "count",
+        ]
+        for field_type in [
+            "embedding",
+            "text",
+            "id",
+            "category",
+            "subcategory",
+            "tags",
+        ]:
             for field in all_fields:
-                assert field in suggestions[field_type], f"Field '{field}' missing from {field_type} suggestions"
+                assert field in suggestions[field_type], (
+                    f"Field '{field}' missing from {field_type} suggestions"
+                )
 
     def test_validate_mapping_success(self):
         mapping = FieldMapping(

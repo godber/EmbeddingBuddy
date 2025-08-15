@@ -9,7 +9,7 @@ from .ui.callbacks.interactions import InteractionCallbacks
 
 def create_app():
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-    
+
     # Allow callbacks to components that are dynamically created in tabs
     app.config.suppress_callback_exceptions = True
 

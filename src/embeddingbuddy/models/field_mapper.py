@@ -25,7 +25,7 @@ class FieldMapper:
     def suggest_mappings(field_analysis: Dict) -> Dict[str, List[str]]:
         """
         Suggest field mappings based on field analysis.
-        
+
         Each dropdown will show ALL available fields, but ordered by relevance
         with the most likely candidates first.
 
@@ -59,42 +59,70 @@ class FieldMapper:
         # Embedding field suggestions (vector fields first, then name-based candidates, then all fields)
         embedding_candidates = vector_fields.copy()
         # Add fields that likely contain embeddings based on name
-        embedding_name_candidates = [f for f in all_fields if any(
-            keyword in f.lower() for keyword in ["embedding", "embeddings", "vector", "vectors", "embed"]
-        )]
+        embedding_name_candidates = [
+            f
+            for f in all_fields
+            if any(
+                keyword in f.lower()
+                for keyword in ["embedding", "embeddings", "vector", "vectors", "embed"]
+            )
+        ]
         # Add name-based candidates that aren't already in vector_fields
         for candidate in embedding_name_candidates:
             if candidate not in embedding_candidates:
                 embedding_candidates.append(candidate)
-        suggestions["embedding"] = create_ordered_suggestions(embedding_candidates, all_fields)
+        suggestions["embedding"] = create_ordered_suggestions(
+            embedding_candidates, all_fields
+        )
 
         # Text field suggestions (text fields first, then all fields)
         text_candidates = text_fields.copy()
         suggestions["text"] = create_ordered_suggestions(text_candidates, all_fields)
 
         # ID field suggestions (ID-like fields first, then all fields)
-        id_candidates = [f for f in keyword_fields if any(
-            keyword in f.lower() for keyword in ["id", "_id", "doc", "document"]
-        )]
+        id_candidates = [
+            f
+            for f in keyword_fields
+            if any(keyword in f.lower() for keyword in ["id", "_id", "doc", "document"])
+        ]
         id_candidates.append("_id")  # _id is always available
         suggestions["id"] = create_ordered_suggestions(id_candidates, all_fields)
 
         # Category field suggestions (category-like fields first, then all fields)
-        category_candidates = [f for f in keyword_fields if any(
-            keyword in f.lower() for keyword in ["category", "class", "type", "label"]
-        )]
-        suggestions["category"] = create_ordered_suggestions(category_candidates, all_fields)
+        category_candidates = [
+            f
+            for f in keyword_fields
+            if any(
+                keyword in f.lower()
+                for keyword in ["category", "class", "type", "label"]
+            )
+        ]
+        suggestions["category"] = create_ordered_suggestions(
+            category_candidates, all_fields
+        )
 
         # Subcategory field suggestions (subcategory-like fields first, then all fields)
-        subcategory_candidates = [f for f in keyword_fields if any(
-            keyword in f.lower() for keyword in ["subcategory", "subclass", "subtype", "subtopic"]
-        )]
-        suggestions["subcategory"] = create_ordered_suggestions(subcategory_candidates, all_fields)
+        subcategory_candidates = [
+            f
+            for f in keyword_fields
+            if any(
+                keyword in f.lower()
+                for keyword in ["subcategory", "subclass", "subtype", "subtopic"]
+            )
+        ]
+        suggestions["subcategory"] = create_ordered_suggestions(
+            subcategory_candidates, all_fields
+        )
 
         # Tags field suggestions (tag-like fields first, then all fields)
-        tags_candidates = [f for f in keyword_fields if any(
-            keyword in f.lower() for keyword in ["tag", "tags", "keyword", "keywords"]
-        )]
+        tags_candidates = [
+            f
+            for f in keyword_fields
+            if any(
+                keyword in f.lower()
+                for keyword in ["tag", "tags", "keyword", "keywords"]
+            )
+        ]
         suggestions["tags"] = create_ordered_suggestions(tags_candidates, all_fields)
 
         return suggestions
