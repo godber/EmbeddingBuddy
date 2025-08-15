@@ -1,6 +1,7 @@
 import numpy as np
 from typing import List, Optional, Tuple
 from ..models.schemas import Document, ProcessedData
+from ..models.field_mapper import FieldMapper
 from .parser import NDJSONParser
 
 
@@ -23,6 +24,42 @@ class DataProcessor:
             documents = self.parser.parse_text(text_content)
             embeddings = self._extract_embeddings(documents)
             return ProcessedData(documents=documents, embeddings=embeddings)
+        except Exception as e:
+            return ProcessedData(documents=[], embeddings=np.array([]), error=str(e))
+
+    def process_opensearch_data(
+        self, raw_documents: List[dict], field_mapping
+    ) -> ProcessedData:
+        """Process raw OpenSearch documents using field mapping."""
+        try:
+            # Transform documents using field mapping
+            transformed_docs = FieldMapper.transform_documents(
+                raw_documents, field_mapping
+            )
+
+            # Parse transformed documents
+            documents = []
+            for doc_dict in transformed_docs:
+                try:
+                    # Ensure required fields are present with defaults if needed
+                    if "id" not in doc_dict or not doc_dict["id"]:
+                        doc_dict["id"] = f"doc_{len(documents)}"
+
+                    doc = Document(**doc_dict)
+                    documents.append(doc)
+                except Exception:
+                    continue  # Skip invalid documents
+
+            if not documents:
+                return ProcessedData(
+                    documents=[],
+                    embeddings=np.array([]),
+                    error="No valid documents after transformation",
+                )
+
+            embeddings = self._extract_embeddings(documents)
+            return ProcessedData(documents=documents, embeddings=embeddings)
+
         except Exception as e:
             return ProcessedData(documents=[], embeddings=np.array([]), error=str(e))
 

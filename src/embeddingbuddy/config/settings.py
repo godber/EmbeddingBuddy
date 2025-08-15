@@ -73,6 +73,12 @@ class AppSettings:
     HOST = os.getenv("EMBEDDINGBUDDY_HOST", "127.0.0.1")
     PORT = int(os.getenv("EMBEDDINGBUDDY_PORT", "8050"))
 
+    # OpenSearch Configuration
+    OPENSEARCH_DEFAULT_SIZE = 100
+    OPENSEARCH_SAMPLE_SIZE = 5
+    OPENSEARCH_CONNECTION_TIMEOUT = 30
+    OPENSEARCH_VERIFY_CERTS = True
+
     # Bootstrap Theme
     EXTERNAL_STYLESHEETS = [
         "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
