@@ -27,7 +27,7 @@ class AppLayout:
                             window.transformersPipeline = pipeline;
                             console.log('✅ Transformers.js pipeline loaded globally');
                             """,
-                            type="module"
+                            type="module",
                         ),
                     ],
                     width=12,

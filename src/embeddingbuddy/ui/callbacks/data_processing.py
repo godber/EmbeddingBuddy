@@ -558,17 +558,17 @@ class DataProcessingCallbacks:
         )
         def handle_text_input_actions(clear_clicks, load_clicks):
             from dash import ctx
-            
+
             if not ctx.triggered:
                 return no_update
-                
-            button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-            
+
+            button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
             if button_id == "clear-text-btn" and clear_clicks:
                 return ""
             elif button_id == "load-sample-btn" and load_clicks:
                 return self._load_sample_text()
-            
+
             return no_update
 
         # Model info callback
@@ -648,15 +648,19 @@ class DataProcessingCallbacks:
     def _load_sample_text(self):
         """Load sample text from assets/sample-txt.md file."""
         import os
-        
+
         try:
             # Get the project root directory (four levels up from this file)
             current_file = os.path.abspath(__file__)
-            project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(current_file)))))
-            sample_file_path = os.path.join(project_root, 'assets', 'sample-txt.md')
-            
+            project_root = os.path.dirname(
+                os.path.dirname(
+                    os.path.dirname(os.path.dirname(os.path.dirname(current_file)))
+                )
+            )
+            sample_file_path = os.path.join(project_root, "assets", "sample-txt.md")
+
             if os.path.exists(sample_file_path):
-                with open(sample_file_path, 'r', encoding='utf-8') as file:
+                with open(sample_file_path, "r", encoding="utf-8") as file:
                     return file.read()
             else:
                 # Fallback sample text if file doesn't exist
@@ -677,8 +681,8 @@ She finely chopped the garlic and sautéed it in two tablespoons of olive oil.
 A pinch of saffron adds a beautiful color and aroma to traditional paella.
 If the soup is too salty, add a peeled potato to absorb excess sodium.
 Let the bread dough rise for at least an hour in a warm, draft-free spot."""
-                
-        except Exception as e:
+
+        except Exception:
             # Return a simple fallback if there's any error
             return "This is sample text for testing embedding generation. You can replace this with your own text."
 

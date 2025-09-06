@@ -9,14 +9,13 @@ from .ui.callbacks.interactions import InteractionCallbacks
 
 def create_app():
     import os
+
     # Get the project root directory (two levels up from this file)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    assets_path = os.path.join(project_root, 'assets')
-    
+    assets_path = os.path.join(project_root, "assets")
+
     app = dash.Dash(
-        __name__, 
-        external_stylesheets=[dbc.themes.BOOTSTRAP],
-        assets_folder=assets_path
+        __name__, external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder=assets_path
     )
 
     # Allow callbacks to components that are dynamically created in tabs
