@@ -20,6 +20,15 @@ class AppLayout:
                 dbc.Col(
                     [
                         html.H1("EmbeddingBuddy", className="text-center mb-4"),
+                        # Load Transformers.js from CDN
+                        html.Script(
+                            """
+                            import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2';
+                            window.transformersPipeline = pipeline;
+                            console.log('✅ Transformers.js pipeline loaded globally');
+                            """,
+                            type="module"
+                        ),
                     ],
                     width=12,
                 )

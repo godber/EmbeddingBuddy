@@ -1,4 +1,4 @@
-from dash import callback, Input, Output, State, no_update
+from dash import callback, Input, Output, State, no_update, html
 from ...data.processor import DataProcessor
 from ...data.sources.opensearch import OpenSearchClient
 from ...models.field_mapper import FieldMapper
@@ -87,6 +87,8 @@ class DataProcessingCallbacks:
 
             if active_tab == "opensearch-tab":
                 return [datasource.create_opensearch_tab()]
+            elif active_tab == "text-input-tab":
+                return [datasource.create_text_input_tab()]
             else:
                 return [datasource.create_file_upload_tab()]
 
@@ -96,6 +98,9 @@ class DataProcessingCallbacks:
 
         # Register collapsible section callbacks
         self._register_collapse_callbacks()
+
+        # Register text input callbacks
+        self._register_text_input_callbacks()
 
     def _register_opensearch_callbacks(self, section_type, opensearch_client):
         """Register callbacks for a specific section (data or prompts)."""
@@ -462,6 +467,220 @@ class DataProcessingCallbacks:
                 )
                 return new_state, icon_class
             return is_open, "fas fa-chevron-down me-2"
+
+    def _register_text_input_callbacks(self):
+        """Register callbacks for text input functionality."""
+
+        # Text length counter callback
+        @callback(
+            Output("text-length-counter", "children"),
+            Input("text-input-area", "value"),
+            prevent_initial_call=False,
+        )
+        def update_text_length_counter(text_value):
+            if not text_value:
+                return "0"
+            return f"{len(text_value):,}"
+
+        # Generate button enable/disable callback
+        @callback(
+            [
+                Output("generate-embeddings-btn", "disabled"),
+                Output("generation-help", "children"),
+                Output("generation-help", "color"),
+            ],
+            [
+                Input("text-input-area", "value"),
+                Input("model-selection", "value"),
+            ],
+            prevent_initial_call=False,
+        )
+        def toggle_generate_button(text_value, model_name):
+            import dash_bootstrap_components as dbc
+
+            if not text_value or not text_value.strip():
+                return (
+                    True,
+                    dbc.Alert(
+                        [
+                            html.I(className="fas fa-info-circle me-2"),
+                            "Enter some text above to enable embedding generation.",
+                        ],
+                        color="light",
+                    ),
+                    "light",
+                )
+
+            if not model_name:
+                return (
+                    True,
+                    dbc.Alert(
+                        [
+                            html.I(className="fas fa-exclamation-triangle me-2"),
+                            "Select an embedding model to continue.",
+                        ],
+                        color="warning",
+                    ),
+                    "warning",
+                )
+
+            text_length = len(text_value.strip())
+            if text_length > AppSettings.MAX_TEXT_LENGTH:
+                return (
+                    True,
+                    dbc.Alert(
+                        [
+                            html.I(className="fas fa-exclamation-triangle me-2"),
+                            f"Text too long ({text_length:,} characters). Maximum allowed: {AppSettings.MAX_TEXT_LENGTH:,} characters.",
+                        ],
+                        color="danger",
+                    ),
+                    "danger",
+                )
+
+            return (
+                False,
+                dbc.Alert(
+                    [
+                        html.I(className="fas fa-check-circle me-2"),
+                        f"Ready to generate embeddings for {text_length:,} characters using {model_name}.",
+                    ],
+                    color="success",
+                ),
+                "success",
+            )
+
+        # Clear text callback
+        @callback(
+            Output("text-input-area", "value"),
+            [Input("clear-text-btn", "n_clicks"), Input("load-sample-btn", "n_clicks")],
+            prevent_initial_call=True,
+        )
+        def handle_text_input_actions(clear_clicks, load_clicks):
+            from dash import ctx
+            
+            if not ctx.triggered:
+                return no_update
+                
+            button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+            
+            if button_id == "clear-text-btn" and clear_clicks:
+                return ""
+            elif button_id == "load-sample-btn" and load_clicks:
+                return self._load_sample_text()
+            
+            return no_update
+
+        # Model info callback
+        @callback(
+            Output("model-info", "children"),
+            Input("model-selection", "value"),
+            prevent_initial_call=False,
+        )
+        def update_model_info(model_name):
+            if not model_name:
+                return html.Span("Please select a model", className="text-muted")
+
+            from ...config.settings import AppSettings
+
+            settings = AppSettings()
+
+            for model in settings.AVAILABLE_MODELS:
+                if model["name"] == model_name:
+                    return html.Div(
+                        [
+                            html.Strong(
+                                f"Dimensions: {model['dimensions']} | Context Length: {model['context_length']}"
+                            ),
+                            html.Br(),
+                            html.Span(model["description"]),
+                            html.Br(),
+                            html.Small(
+                                f"Multilingual: {'Yes' if model.get('multilingual', False) else 'No'} | Size: {model['size']}",
+                                className="text-muted",
+                            ),
+                        ]
+                    )
+
+            return html.Span("Model information not available", className="text-muted")
+
+        # Process client-side embeddings result callback
+        @callback(
+            [
+                Output("processed-data", "data", allow_duplicate=True),
+                Output("text-input-status", "children"),
+                Output("text-input-status", "color"),
+                Output("text-input-status", "style"),
+                Output("generate-embeddings-btn", "disabled", allow_duplicate=True),
+            ],
+            [Input("embeddings-generated-trigger", "data")],
+            prevent_initial_call=True,
+        )
+        def process_embeddings_result(embeddings_data):
+            """Process embeddings generated client-side."""
+            if not embeddings_data:
+                return no_update, no_update, no_update, no_update, no_update
+
+            processed_data = self.processor.process_client_embeddings(embeddings_data)
+
+            if processed_data.error:
+                return (
+                    {"error": processed_data.error},
+                    f"❌ Error: {processed_data.error}",
+                    "danger",
+                    {"display": "block"},
+                    False,
+                )
+
+            return (
+                {
+                    "documents": [
+                        self._document_to_dict(doc) for doc in processed_data.documents
+                    ],
+                    "embeddings": processed_data.embeddings.tolist(),
+                },
+                f"✅ Generated embeddings for {len(processed_data.documents)} text chunks",
+                "success",
+                {"display": "block"},
+                False,
+            )
+
+    def _load_sample_text(self):
+        """Load sample text from assets/sample-txt.md file."""
+        import os
+        
+        try:
+            # Get the project root directory (four levels up from this file)
+            current_file = os.path.abspath(__file__)
+            project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(current_file)))))
+            sample_file_path = os.path.join(project_root, 'assets', 'sample-txt.md')
+            
+            if os.path.exists(sample_file_path):
+                with open(sample_file_path, 'r', encoding='utf-8') as file:
+                    return file.read()
+            else:
+                # Fallback sample text if file doesn't exist
+                return """The sun peeked through the clouds after a drizzly morning.
+A gentle breeze rustled the leaves as we walked along the shoreline.
+Heavy rains caused flooding in several low-lying neighborhoods.
+It was so hot that even the birds sought shade under the palm trees.
+By midnight, the temperature had dropped below freezing.
+
+The new smartphone features a foldable display and 5G connectivity.
+In the world of AI, transformers have revolutionized natural language processing.
+Quantum computing promises to solve problems beyond classical computers' reach.
+Blockchain technology is being explored for secure voting systems.
+Virtual reality headsets are becoming more affordable and accessible.
+
+Preheat the oven to 375°F before you start mixing the batter.
+She finely chopped the garlic and sautéed it in two tablespoons of olive oil.
+A pinch of saffron adds a beautiful color and aroma to traditional paella.
+If the soup is too salty, add a peeled potato to absorb excess sodium.
+Let the bread dough rise for at least an hour in a warm, draft-free spot."""
+                
+        except Exception as e:
+            # Return a simple fallback if there's any error
+            return "This is sample text for testing embedding generation. You can replace this with your own text."
 
     @staticmethod
     def _document_to_dict(doc):

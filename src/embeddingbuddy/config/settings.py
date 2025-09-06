@@ -79,6 +79,71 @@ class AppSettings:
     OPENSEARCH_CONNECTION_TIMEOUT = 30
     OPENSEARCH_VERIFY_CERTS = True
 
+    # Text Input / Transformers.js Configuration
+    DEFAULT_EMBEDDING_MODEL = "Xenova/all-mpnet-base-v2"
+    MAX_TEXT_LENGTH = 50000  # Characters (browser memory limits)
+    DEFAULT_TOKENIZATION_METHOD = "sentence"
+    MAX_BATCH_SIZE = 8  # Process in smaller batches for memory management
+
+    # Available Transformers.js compatible models
+    AVAILABLE_MODELS = [
+        {
+            "name": "Xenova/all-mpnet-base-v2",
+            "label": "All-MPNet-Base-v2 (Quality, 768d)",
+            "description": "Higher quality embeddings with better semantic understanding",
+            "dimensions": 768,
+            "size": "109 MB",
+            "context_length": 512,
+            "multilingual": False,
+            "default": True,
+        },
+        {
+            "name": "Xenova/all-MiniLM-L6-v2",
+            "label": "All-MiniLM-L6-v2 (Fast, 384d)",
+            "description": "Lightweight model, good for quick testing and general purpose",
+            "dimensions": 384,
+            "size": "23 MB",
+            "context_length": 512,
+            "multilingual": False,
+            "default": False,
+        },
+        {
+            "name": "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
+            "label": "Multilingual MiniLM (50+ languages)",
+            "description": "Support for multiple languages with good performance",
+            "dimensions": 384,
+            "size": "127 MB",
+            "context_length": 512,
+            "multilingual": True,
+        },
+        {
+            "name": "Xenova/bge-small-en-v1.5",
+            "label": "BGE Small English (High quality, 384d)",
+            "description": "Beijing Academy of AI model with excellent performance on retrieval tasks",
+            "dimensions": 384,
+            "size": "67 MB",
+            "context_length": 512,
+            "multilingual": False,
+        },
+        {
+            "name": "Xenova/gte-small",
+            "label": "GTE Small (General Text Embeddings, 384d)",
+            "description": "Alibaba's general text embedding model, balanced performance",
+            "dimensions": 384,
+            "size": "67 MB",
+            "context_length": 512,
+            "multilingual": False,
+        },
+    ]
+
+    # Browser compatibility requirements
+    SUPPORTED_BROWSERS = {
+        "chrome": ">=88",
+        "firefox": ">=92",
+        "safari": ">=15.4",
+        "edge": ">=88",
+    }
+
     # Bootstrap Theme
     EXTERNAL_STYLESHEETS = [
         "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"

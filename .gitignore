@@ -82,3 +82,6 @@ pip-audit-report.json
 
 # Temporary files
 *.tmp
+
+
+examples/extra
