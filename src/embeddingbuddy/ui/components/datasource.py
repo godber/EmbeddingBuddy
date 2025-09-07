@@ -1,11 +1,13 @@
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from .upload import UploadComponent
+from .textinput import TextInputComponent
 
 
 class DataSourceComponent:
     def __init__(self):
         self.upload_component = UploadComponent()
+        self.text_input_component = TextInputComponent()
 
     def create_tabbed_interface(self):
         """Create tabbed interface for different data sources."""
@@ -17,6 +19,7 @@ class DataSourceComponent:
                             [
                                 dbc.Tab(label="File Upload", tab_id="file-tab"),
                                 dbc.Tab(label="OpenSearch", tab_id="opensearch-tab"),
+                                dbc.Tab(label="Text Input", tab_id="text-input-tab"),
                             ],
                             id="data-source-tabs",
                             active_tab="file-tab",
@@ -207,6 +210,10 @@ class DataSourceComponent:
                 ),
             ]
         )
+
+    def create_text_input_tab(self):
+        """Create text input tab content for browser-based embedding generation."""
+        return html.Div([self.text_input_component.create_text_input_interface()])
 
     def _create_opensearch_section(self, section_type):
         """Create a complete OpenSearch section for either 'data' or 'prompts'."""

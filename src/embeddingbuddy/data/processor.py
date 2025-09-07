@@ -63,6 +63,90 @@ class DataProcessor:
         except Exception as e:
             return ProcessedData(documents=[], embeddings=np.array([]), error=str(e))
 
+    def process_client_embeddings(self, embeddings_data: dict) -> ProcessedData:
+        """Process embeddings data received from client-side JavaScript."""
+        try:
+            if "error" in embeddings_data:
+                return ProcessedData(
+                    documents=[],
+                    embeddings=np.array([]),
+                    error=embeddings_data["error"],
+                )
+
+            # Extract documents and embeddings from client data
+            documents_data = embeddings_data.get("documents", [])
+            embeddings_list = embeddings_data.get("embeddings", [])
+
+            if not documents_data or not embeddings_list:
+                return ProcessedData(
+                    documents=[],
+                    embeddings=np.array([]),
+                    error="No documents or embeddings in client data",
+                )
+
+            if len(documents_data) != len(embeddings_list):
+                return ProcessedData(
+                    documents=[],
+                    embeddings=np.array([]),
+                    error="Mismatch between number of documents and embeddings",
+                )
+
+            # Convert embeddings to numpy array first
+            try:
+                embeddings = np.array(embeddings_list)
+
+                if embeddings.ndim != 2:
+                    return ProcessedData(
+                        documents=[],
+                        embeddings=np.array([]),
+                        error="Invalid embedding dimensions",
+                    )
+
+            except Exception as e:
+                return ProcessedData(
+                    documents=[],
+                    embeddings=np.array([]),
+                    error=f"Error processing embeddings: {str(e)}",
+                )
+
+            # Convert to Document objects with embeddings
+            documents = []
+            for i, doc_data in enumerate(documents_data):
+                try:
+                    # Skip if we don't have a corresponding embedding
+                    if i >= len(embeddings):
+                        continue
+
+                    # Ensure required fields are present
+                    if "id" not in doc_data or not doc_data["id"]:
+                        doc_data["id"] = f"text_input_{i}"
+                    if "text" not in doc_data or not doc_data["text"].strip():
+                        continue  # Skip documents without text
+
+                    # Add the embedding to doc_data
+                    doc_data["embedding"] = embeddings[i].tolist()
+
+                    doc = Document(**doc_data)
+                    documents.append(doc)
+                except Exception:
+                    # Skip invalid documents but continue processing
+                    continue
+
+            if not documents:
+                return ProcessedData(
+                    documents=[],
+                    embeddings=np.array([]),
+                    error="No valid documents found in client data",
+                )
+
+            # Only keep embeddings for valid documents
+            valid_embeddings = embeddings[: len(documents)]
+
+            return ProcessedData(documents=documents, embeddings=valid_embeddings)
+
+        except Exception as e:
+            return ProcessedData(documents=[], embeddings=np.array([]), error=str(e))
+
     def _extract_embeddings(self, documents: List[Document]) -> np.ndarray:
         if not documents:
             return np.array([])

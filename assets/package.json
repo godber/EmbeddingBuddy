@@ -1,0 +1,9 @@
+{
+  "name": "embeddingbuddy-assets",
+  "version": "1.0.0",
+  "description": "JavaScript dependencies for EmbeddingBuddy text input functionality",
+  "dependencies": {
+    "@huggingface/transformers": "^3.0.0"
+  },
+  "type": "module"
+}
