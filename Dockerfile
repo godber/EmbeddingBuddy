@@ -21,11 +21,13 @@ COPY pyproject.toml uv.lock ./
 # Copy source code (needed for editable install)
 COPY src/ src/
 COPY main.py .
+COPY wsgi.py .
+COPY run_prod.py .
 COPY assets/ assets/
 
-# Create virtual environment and install dependencies
+# Create virtual environment and install dependencies (including production extras)
 RUN uv venv .venv
-RUN uv sync --frozen 
+RUN uv sync --frozen --extra prod 
 
 # Stage 2: Runtime
 FROM python:3.11-slim as runtime
@@ -45,6 +47,8 @@ COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
 COPY --from=builder /app/main.py /app/main.py
 COPY --from=builder /app/assets /app/assets
+COPY --from=builder /app/wsgi.py /app/wsgi.py
+COPY --from=builder /app/run_prod.py /app/run_prod.py
 
 # Make sure the virtual environment is in PATH
 ENV PATH="/app/.venv/bin:$PATH"
@@ -55,7 +59,8 @@ ENV PYTHONPATH="/app/src:$PYTHONPATH"
 # Environment variables for production
 ENV EMBEDDINGBUDDY_HOST=0.0.0.0
 ENV EMBEDDINGBUDDY_PORT=8050
-ENV EMBEDDINGBUDDY_DEBUG=False
+ENV EMBEDDINGBUDDY_DEBUG=false
+ENV EMBEDDINGBUDDY_ENV=production
 
 # Expose port
 EXPOSE 8050
@@ -64,5 +69,5 @@ EXPOSE 8050
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8050/', timeout=5)" || exit 1
 
-# Run application
-CMD ["python", "main.py"]
+# Run application with Gunicorn in production
+CMD ["python", "run_prod.py"]

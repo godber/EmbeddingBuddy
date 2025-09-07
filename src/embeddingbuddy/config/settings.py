@@ -72,6 +72,15 @@ class AppSettings:
     DEBUG = os.getenv("EMBEDDINGBUDDY_DEBUG", "True").lower() == "true"
     HOST = os.getenv("EMBEDDINGBUDDY_HOST", "127.0.0.1")
     PORT = int(os.getenv("EMBEDDINGBUDDY_PORT", "8050"))
+    
+    # Environment Configuration
+    ENVIRONMENT = os.getenv("EMBEDDINGBUDDY_ENV", "development")  # development, production
+    
+    # WSGI Server Configuration (for production)
+    GUNICORN_WORKERS = int(os.getenv("GUNICORN_WORKERS", "4"))
+    GUNICORN_BIND = os.getenv("GUNICORN_BIND", f"{HOST}:{PORT}")
+    GUNICORN_TIMEOUT = int(os.getenv("GUNICORN_TIMEOUT", "120"))
+    GUNICORN_KEEPALIVE = int(os.getenv("GUNICORN_KEEPALIVE", "5"))
 
     # OpenSearch Configuration
     OPENSEARCH_DEFAULT_SIZE = 100

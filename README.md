@@ -12,7 +12,7 @@ EmbeddingBuddy provides an intuitive web interface for analyzing high-dimensiona
 embedding vectors by applying various dimensionality reduction algorithms and
 visualizing the results in interactive 2D and 3D plots. The application features
 a clean, modular architecture that makes it easy to test, maintain, and extend
-with new features. It supports dual dataset visualization, allowing you to compare 
+with new features. It supports dual dataset visualization, allowing you to compare
 documents and prompts to understand how queries relate to your content.
 
 ## Features
@@ -73,16 +73,76 @@ uv sync
 
 2. **Run the application:**
 
+**Development mode** (with auto-reload):
+
 ```bash
-uv run python main.py
+uv run run_dev.py
 ```
 
-3. **Open your browser** to http://127.0.0.1:8050
+**Production mode** (with Gunicorn WSGI server):
+
+```bash
+# Install production dependencies
+uv sync --extra prod
+
+# Run in production mode
+uv run run_prod.py
+```
+
+**Legacy mode** (basic Dash server):
+
+```bash
+uv run main.py
+```
+
+3. **Open your browser** to <http://127.0.0.1:8050>
 
 4. **Test with sample data**:
    - Upload `sample_data.ndjson` (documents)
    - Upload `sample_prompts.ndjson` (prompts) to see dual visualization
    - Use the "Show prompts" toggle to compare how prompts relate to documents
+
+## Docker
+
+You can also run EmbeddingBuddy using Docker:
+
+### Basic Usage
+
+```bash
+# Run in the background
+docker compose up -d
+```
+
+The application will be available at <http://127.0.0.1:8050>
+
+### With OpenSearch
+
+To run with OpenSearch for enhanced search capabilities:
+
+```bash
+# Run in the background with OpenSearch
+docker compose --profile opensearch up -d
+```
+
+This will start both the EmbeddingBuddy application and an OpenSearch instance.
+OpenSearch will be available at <http://127.0.0.1:9200>
+
+### Docker Commands
+
+```bash
+# Stop all services
+docker compose down
+
+# Stop and remove volumes
+docker compose down -v
+
+# View logs
+docker compose logs embeddingbuddy
+docker compose logs opensearch
+
+# Rebuild containers
+docker compose build
+```
 
 ## Development
 

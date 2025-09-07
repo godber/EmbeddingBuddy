@@ -1,6 +1,6 @@
 services:
   opensearch:
-    image: opensearchproject/opensearch:2.13.0
+    image: opensearchproject/opensearch:2
     container_name: embeddingbuddy-opensearch
     profiles:
       - opensearch
