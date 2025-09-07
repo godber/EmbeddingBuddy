@@ -1,0 +1,69 @@
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.13.0
+    container_name: embeddingbuddy-opensearch
+    profiles:
+      - opensearch
+    environment:
+      - cluster.name=embeddingbuddy-cluster
+      - node.name=embeddingbuddy-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - embeddingbuddy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  embeddingbuddy:
+    build: .
+    container_name: embeddingbuddy-app
+    environment:
+      - EMBEDDINGBUDDY_HOST=0.0.0.0
+      - EMBEDDINGBUDDY_PORT=8050
+      - EMBEDDINGBUDDY_DEBUG=false
+      - OPENSEARCH_HOST=opensearch
+      - OPENSEARCH_PORT=9200
+      - OPENSEARCH_SCHEME=http
+      - OPENSEARCH_VERIFY_CERTS=false
+    ports:
+      - "8050:8050"
+    networks:
+      - embeddingbuddy
+    depends_on:
+      opensearch:
+        condition: service_healthy
+        required: false
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import requests; requests.get(\"http://localhost:8050/\", timeout=5)'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  opensearch-data:
+    driver: local
+
+networks:
+  embeddingbuddy:
+    driver: bridge
