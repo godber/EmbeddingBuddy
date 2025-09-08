@@ -25,7 +25,7 @@ def main():
         "--workers", str(AppSettings.GUNICORN_WORKERS),
         "--bind", AppSettings.GUNICORN_BIND,
         "--timeout", str(AppSettings.GUNICORN_TIMEOUT),
-        "--keepalive", str(AppSettings.GUNICORN_KEEPALIVE),
+        "--keep-alive", str(AppSettings.GUNICORN_KEEPALIVE),
         "--access-logfile", "-",
         "--error-logfile", "-",
         "--log-level", "info",
