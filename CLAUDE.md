@@ -22,11 +22,13 @@ uv sync
 **Run the application:**
 
 Development mode (with auto-reload):
+
 ```bash
 uv run run_dev.py
 ```
 
 Production mode (with Gunicorn WSGI server):
+
 ```bash
 # First install production dependencies
 uv sync --extra prod
@@ -36,11 +38,12 @@ uv run run_prod.py
 ```
 
 Legacy mode (basic Dash server):
+
 ```bash
 uv run main.py
 ```
 
-The app will be available at http://127.0.0.1:8050
+The app will be available at <http://127.0.0.1:8050>
 
 **Run tests:**
 

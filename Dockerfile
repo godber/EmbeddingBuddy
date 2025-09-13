@@ -65,6 +65,11 @@ ENV EMBEDDINGBUDDY_ENV=production
 # Expose port
 EXPOSE 8050
 
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN chown -R appuser:appuser /app
+USER appuser
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8050/', timeout=5)" || exit 1

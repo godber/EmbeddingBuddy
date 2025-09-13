@@ -4,7 +4,9 @@
       "Bash(mkdir:*)",
       "Bash(uv run:*)",
       "Bash(uv add:*)",
-      "Bash(uv sync:*)"
+      "Bash(uv sync:*)",
+      "Bash(tree:*)",
+      "WebFetch(domain:www.dash-bootstrap-components.com)"
     ],
     "deny": [],
     "ask": [],

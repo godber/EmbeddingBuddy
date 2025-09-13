@@ -152,22 +152,38 @@ The application follows a modular architecture for improved maintainability and 
 
 ```text
 src/embeddingbuddy/
-├── config/          # Configuration management
-│   └── settings.py  # Centralized app settings
-├── data/           # Data parsing and processing
-│   ├── parser.py   # NDJSON parsing logic
-│   └── processor.py # Data transformation utilities
-├── models/         # Data schemas and algorithms
-│   ├── schemas.py  # Pydantic data models
-│   └── reducers.py # Dimensionality reduction algorithms
-├── visualization/ # Plot creation and styling
-│   ├── plots.py   # Plot factory and creation logic
-│   └── colors.py  # Color mapping utilities
-├── ui/            # User interface components
-│   ├── layout.py  # Main application layout
-│   ├── components/ # Reusable UI components
-│   └── callbacks/ # Organized callback functions
-└── utils/         # Utility functions
+├── app.py                     # Main application entry point and factory
+├── config/                    # Configuration management
+│   └── settings.py            # Centralized app settings
+├── data/                      # Data parsing and processing
+│   ├── parser.py              # NDJSON parsing logic
+│   ├── processor.py           # Data transformation utilities
+│   └── sources/               # Data source integrations
+│       └── opensearch.py      # OpenSearch data source
+├── models/                    # Data schemas and algorithms
+│   ├── schemas.py             # Pydantic data models
+│   ├── reducers.py            # Dimensionality reduction algorithms
+│   └── field_mapper.py        # Field mapping utilities
+├── visualization/             # Plot creation and styling
+│   ├── plots.py               # Plot factory and creation logic
+│   └── colors.py              # Color mapping utilities
+├── ui/                        # User interface components
+│   ├── layout.py              # Main application layout
+│   ├── components/            # Reusable UI components
+│   │   ├── sidebar.py         # Sidebar component
+│   │   ├── upload.py          # Upload components
+│   │   ├── textinput.py       # Text input components
+│   │   └── datasource.py      # Data source components
+│   └── callbacks/             # Organized callback functions
+│       ├── data_processing.py # Data upload/processing callbacks
+│       ├── visualization.py   # Plot update callbacks
+│       └── interactions.py    # User interaction callbacks
+└── utils/                     # Utility functions
+
+main.py            # Application runner (at project root)
+main.py            # Application runner (at project root)
+run_dev.py         # Development server runner
+run_prod.py        # Production server runner
 ```
 
 ### Testing

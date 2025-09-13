@@ -30,9 +30,6 @@ class TextInputComponent:
                 # Generation controls
                 self._create_generation_controls(),
                 html.Hr(),
-                # Progress indicators
-                self._create_progress_indicators(),
-                html.Hr(),
                 # Status and results
                 self._create_status_section(),
                 # Hidden components for data flow
@@ -297,65 +294,10 @@ class TextInputComponent:
             ]
         )
 
-    def _create_progress_indicators(self):
-        """Create progress bars for model loading and embedding generation."""
-        return html.Div(
-            [
-                # Model loading progress
-                html.Div(
-                    [
-                        html.H6("Model Loading Progress", className="mb-2"),
-                        dbc.Progress(
-                            id="model-loading-progress",
-                            value=0,
-                            striped=True,
-                            animated=True,
-                            className="mb-2",
-                        ),
-                        html.Small(
-                            id="model-loading-status",
-                            children="No model loading in progress",
-                            className="text-muted",
-                        ),
-                    ],
-                    id="model-loading-section",
-                    style={"display": "none"},
-                ),
-                html.Br(),
-                # Embedding generation progress
-                html.Div(
-                    [
-                        html.H6("Embedding Generation Progress", className="mb-2"),
-                        dbc.Progress(
-                            id="embedding-progress",
-                            value=0,
-                            striped=True,
-                            animated=True,
-                            className="mb-2",
-                        ),
-                        html.Small(
-                            id="embedding-status",
-                            children="No embedding generation in progress",
-                            className="text-muted",
-                        ),
-                    ],
-                    id="embedding-progress-section",
-                    style={"display": "none"},
-                ),
-            ]
-        )
-
     def _create_status_section(self):
         """Create status alerts and results preview."""
         return html.Div(
             [
-                # Immediate status (from client-side)
-                dbc.Alert(
-                    id="text-input-status-immediate",
-                    children="Ready to generate embeddings",
-                    color="light",
-                    className="mb-3",
-                ),
                 # Server-side status
                 dbc.Alert(
                     id="text-input-status",

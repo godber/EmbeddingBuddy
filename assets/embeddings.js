@@ -45,28 +45,12 @@ class TransformersEmbedder {
                 console.log('✅ Using globally loaded Transformers.js pipeline');
             }
             
-            // Show loading progress to user
-            if (window.updateModelLoadingProgress) {
-                window.updateModelLoadingProgress(0, `Loading ${modelName}...`);
-            }
-            
-            this.extractor = await window.transformers.pipeline('feature-extraction', modelName, {
-                progress_callback: (data) => {
-                    if (window.updateModelLoadingProgress && data.progress !== undefined) {
-                        const progress = Math.round(data.progress);
-                        window.updateModelLoadingProgress(progress, data.status || 'Loading...');
-                    }
-                }
-            });
-            
+            this.extractor = await window.transformers.pipeline('feature-extraction', modelName);
+
             this.modelCache.set(modelName, this.extractor);
             this.currentModel = modelName;
             this.isLoading = false;
-            
-            if (window.updateModelLoadingProgress) {
-                window.updateModelLoadingProgress(100, 'Model loaded successfully');
-            }
-            
+
             return { success: true, model: modelName };
         } catch (error) {
             this.isLoading = false;
@@ -116,17 +100,8 @@ class TransformersEmbedder {
                     }
                 });
                 
-                // Update progress
-                const progress = Math.min(100, ((i + batch.length) / texts.length) * 100);
-                if (window.updateEmbeddingProgress) {
-                    window.updateEmbeddingProgress(progress, `Processing ${i + batch.length}/${texts.length} texts`);
-                }
             }
-            
-            if (window.updateEmbeddingProgress) {
-                window.updateEmbeddingProgress(100, `Generated ${embeddings.length} embeddings successfully`);
-            }
-            
+
             return embeddings;
         } catch (error) {
             console.error('Embedding generation error:', error);
@@ -139,30 +114,6 @@ class TransformersEmbedder {
 window.transformersEmbedder = new TransformersEmbedder();
 console.log('📦 TransformersEmbedder instance created');
 
-// Global progress update functions
-window.updateModelLoadingProgress = function(progress, status) {
-    const progressBar = document.getElementById('model-loading-progress');
-    const statusText = document.getElementById('model-loading-status');
-    if (progressBar) {
-        progressBar.style.width = progress + '%';
-        progressBar.setAttribute('aria-valuenow', progress);
-    }
-    if (statusText) {
-        statusText.textContent = status;
-    }
-};
-
-window.updateEmbeddingProgress = function(progress, status) {
-    const progressBar = document.getElementById('embedding-progress');
-    const statusText = document.getElementById('embedding-status');
-    if (progressBar) {
-        progressBar.style.width = progress + '%';
-        progressBar.setAttribute('aria-valuenow', progress);
-    }
-    if (statusText) {
-        statusText.textContent = status;
-    }
-};
 
 // Dash clientside callback functions
 window.dash_clientside = window.dash_clientside || {};
@@ -170,31 +121,28 @@ console.log('🔧 Setting up window.dash_clientside.transformers');
 window.dash_clientside.transformers = {
     generateEmbeddings: async function(nClicks, textContent, modelName, tokenizationMethod, category, subcategory) {
         console.log('🚀 generateEmbeddings called with:', { nClicks, modelName, tokenizationMethod, textLength: textContent?.length });
-        
+
         if (!nClicks || !textContent || textContent.trim().length === 0) {
             console.log('⚠️ Early return - missing required parameters');
             return window.dash_clientside.no_update;
         }
-        
+
         try {
             // Initialize model if needed
             const initResult = await window.transformersEmbedder.initializeModel(modelName);
             if (!initResult.success) {
                 return [
-                    { error: initResult.error },
-                    `❌ Model loading error: ${initResult.error}`,
-                    "danger",
+                    { error: `Model loading error: ${initResult.error}` },
                     false
                 ];
             }
-            
+
             // Tokenize text based on method
             let textChunks;
             const trimmedText = textContent.trim();
-            
+
             switch (tokenizationMethod) {
                 case 'sentence':
-                    // Simple sentence splitting - can be enhanced with proper NLP
                     textChunks = trimmedText
                         .split(/[.!?]+/)
                         .map(s => s.trim())
@@ -215,28 +163,24 @@ window.dash_clientside.transformers = {
                 default:
                     textChunks = [trimmedText];
             }
-            
+
             if (textChunks.length === 0) {
                 return [
                     { error: 'No valid text chunks found after tokenization' },
-                    '❌ Error: No valid text chunks found after tokenization',
-                    "danger",
                     false
                 ];
             }
-            
+
             // Generate embeddings
             const embeddings = await window.transformersEmbedder.generateEmbeddings(textChunks);
-            
+
             if (!embeddings || embeddings.length !== textChunks.length) {
                 return [
-                    { error: 'Embedding generation failed - mismatch in text chunks and embeddings' },
-                    '❌ Error: Embedding generation failed',
-                    "danger",
+                    { error: 'Embedding generation failed' },
                     false
                 ];
             }
-            
+
             // Create documents structure
             const documents = textChunks.map((text, i) => ({
                 id: `text_input_${Date.now()}_${i}`,
@@ -246,33 +190,36 @@ window.dash_clientside.transformers = {
                 subcategory: subcategory || "Generated",
                 tags: []
             }));
-            
+
+            // Return the successful embeddings data
+            const embeddingsData = {
+                documents: documents,
+                embeddings: embeddings
+            };
+
+            console.log('✅ Embeddings generated successfully:', embeddingsData);
+
             return [
-                {
-                    documents: documents,
-                    embeddings: embeddings
-                },
-                `✅ Generated embeddings for ${documents.length} text chunks using ${modelName}`,
-                "success",
+                embeddingsData,
                 false
             ];
-            
+
         } catch (error) {
             console.error('Client-side embedding error:', error);
             return [
                 { error: error.message },
-                `❌ Error: ${error.message}`,
-                "danger", 
                 false
             ];
         }
     }
 };
 
+
 console.log('✅ Transformers.js client-side setup complete');
 console.log('Available:', {
     transformersEmbedder: !!window.transformersEmbedder,
     dashClientside: !!window.dash_clientside,
     transformersModule: !!window.dash_clientside?.transformers,
-    generateFunction: typeof window.dash_clientside?.transformers?.generateEmbeddings
+    generateFunction: typeof window.dash_clientside?.transformers?.generateEmbeddings,
+    processAsync: typeof window.processEmbeddingsAsync
 });
