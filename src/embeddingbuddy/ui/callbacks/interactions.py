@@ -20,4 +20,3 @@ class InteractionCallbacks:
                 return dash.no_update, dash.no_update
 
             return None, None
-

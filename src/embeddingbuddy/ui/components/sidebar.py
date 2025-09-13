@@ -87,15 +87,17 @@ class SidebarComponent:
             [
                 self.textinput_component.create_text_input_interface(),
             ],
-            title=html.Span([
-                "Generate Embeddings ",
-                html.I(
-                    className="fas fa-info-circle text-muted",
-                    style={"cursor": "pointer"},
-                    id="generate-embeddings-info-icon",
-                    title="Create new embeddings from text input using various in-browser models"
-                )
-            ]),
+            title=html.Span(
+                [
+                    "Generate Embeddings ",
+                    html.I(
+                        className="fas fa-info-circle text-muted",
+                        style={"cursor": "pointer"},
+                        id="generate-embeddings-info-icon",
+                        title="Create new embeddings from text input using various in-browser models",
+                    ),
+                ]
+            ),
             item_id="generate-embeddings-accordion",
         )
 
@@ -106,15 +108,17 @@ class SidebarComponent:
                 self.datasource_component.create_success_alert(),
                 self.datasource_component.create_tabbed_interface(),
             ],
-            title=html.Span([
-                "Load Embeddings ",
-                html.I(
-                    className="fas fa-info-circle text-muted",
-                    style={"cursor": "pointer"},
-                    id="load-embeddings-info-icon",
-                    title="Load existing embeddings: upload files or read from OpenSearch"
-                )
-            ]),
+            title=html.Span(
+                [
+                    "Load Embeddings ",
+                    html.I(
+                        className="fas fa-info-circle text-muted",
+                        style={"cursor": "pointer"},
+                        id="load-embeddings-info-icon",
+                        title="Load existing embeddings: upload files or read from OpenSearch",
+                    ),
+                ]
+            ),
             item_id="data-sources-accordion",
         )
 
@@ -124,14 +128,16 @@ class SidebarComponent:
             + self._create_color_dropdown()
             + self._create_dimension_toggle()
             + self._create_prompts_toggle(),
-            title=html.Span([
-                "Visualization Controls ",
-                html.I(
-                    className="fas fa-info-circle text-muted",
-                    style={"cursor": "pointer"},
-                    id="visualization-controls-info-icon",
-                    title="Configure plot settings: select dimensionality reduction method, colors, and display options"
-                )
-            ]),
+            title=html.Span(
+                [
+                    "Visualization Controls ",
+                    html.I(
+                        className="fas fa-info-circle text-muted",
+                        style={"cursor": "pointer"},
+                        id="visualization-controls-info-icon",
+                        title="Configure plot settings: select dimensionality reduction method, colors, and display options",
+                    ),
+                ]
+            ),
             item_id="visualization-controls-accordion",
         )

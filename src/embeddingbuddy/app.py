@@ -18,9 +18,9 @@ def create_app():
         __name__,
         external_stylesheets=[
             dbc.themes.BOOTSTRAP,
-            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
         ],
-        assets_folder=assets_path
+        assets_folder=assets_path,
     )
 
     # Allow callbacks to components that are dynamically created in tabs

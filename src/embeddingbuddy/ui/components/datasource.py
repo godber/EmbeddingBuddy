@@ -208,7 +208,6 @@ class DataSourceComponent:
             ]
         )
 
-
     def _create_opensearch_section(self, section_type):
         """Create a complete OpenSearch section for either 'data' or 'prompts'."""
         section_id = section_type  # 'data' or 'prompts'

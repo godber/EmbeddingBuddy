@@ -294,7 +294,6 @@ class TextInputComponent:
             ]
         )
 
-
     def _create_status_section(self):
         """Create status alerts and results preview."""
         return html.Div(
