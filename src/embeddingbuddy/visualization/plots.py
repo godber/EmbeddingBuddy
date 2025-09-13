@@ -38,9 +38,9 @@ class PlotFactory:
         if dimensions == "3d":
             fig = px.scatter_3d(
                 df,
-                x="dim_1",
-                y="dim_2",
-                z="dim_3",
+                x="x",
+                y="y",
+                z="z",
                 color=color_values,
                 hover_data=hover_fields,
                 title=f"3D Embedding Visualization - {method} (colored by {color_by})",
@@ -49,8 +49,8 @@ class PlotFactory:
         else:
             fig = px.scatter(
                 df,
-                x="dim_1",
-                y="dim_2",
+                x="x",
+                y="y",
                 color=color_values,
                 hover_data=hover_fields,
                 title=f"2D Embedding Visualization - {method} (colored by {color_by})",
@@ -77,17 +77,17 @@ class PlotFactory:
         if dimensions == "3d":
             doc_fig = px.scatter_3d(
                 doc_df,
-                x="dim_1",
-                y="dim_2",
-                z="dim_3",
+                x="x",
+                y="y",
+                z="z",
                 color=doc_color_values,
                 hover_data=hover_fields,
             )
         else:
             doc_fig = px.scatter(
                 doc_df,
-                x="dim_1",
-                y="dim_2",
+                x="x",
+                y="y",
                 color=doc_color_values,
                 hover_data=hover_fields,
             )
@@ -114,17 +114,17 @@ class PlotFactory:
             if dimensions == "3d":
                 prompt_fig = px.scatter_3d(
                     prompt_df,
-                    x="dim_1",
-                    y="dim_2",
-                    z="dim_3",
+                    x="x",
+                    y="y",
+                    z="z",
                     color=prompt_color_values,
                     hover_data=hover_fields,
                 )
             else:
                 prompt_fig = px.scatter(
                     prompt_df,
-                    x="dim_1",
-                    y="dim_2",
+                    x="x",
+                    y="y",
                     color=prompt_color_values,
                     hover_data=hover_fields,
                 )
@@ -168,11 +168,11 @@ class PlotFactory:
                 "category": doc.category,
                 "subcategory": doc.subcategory,
                 "tags_str": ", ".join(doc.tags) if doc.tags else "None",
-                "dim_1": coordinates[i, 0],
-                "dim_2": coordinates[i, 1],
+                "x": coordinates[i, 0],
+                "y": coordinates[i, 1],
             }
             if dimensions == "3d":
-                row["dim_3"] = coordinates[i, 2]
+                row["z"] = coordinates[i, 2]
             df_data.append(row)
 
         return pd.DataFrame(df_data)

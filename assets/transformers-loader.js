@@ -104,17 +104,28 @@ window.dash_clientside = window.dash_clientside || {};
 window.dash_clientside.transformers = {
     generateEmbeddings: async function(nClicks, textContent, modelName, tokenizationMethod, category, subcategory) {
         console.log('🚀 Client-side generateEmbeddings called');
-        
+
         if (!nClicks || !textContent || textContent.trim().length === 0) {
             console.log('⚠️ Missing required parameters');
             return window.dash_clientside.no_update;
         }
-        
+
         try {
+            // Ensure Transformers.js is loaded
+            if (!window.transformersLibraryLoaded) {
+                const loaded = await initializeTransformers();
+                if (!loaded) {
+                    return [
+                        { error: 'Failed to load Transformers.js' },
+                        false
+                    ];
+                }
+            }
+
             // Tokenize text
             let textChunks;
             const trimmedText = textContent.trim();
-            
+
             switch (tokenizationMethod) {
                 case 'sentence':
                     textChunks = trimmedText.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0);
@@ -128,45 +139,50 @@ window.dash_clientside.transformers = {
                 default:
                     textChunks = [trimmedText];
             }
-            
+
             if (textChunks.length === 0) {
-                throw new Error('No valid text chunks after tokenization');
+                return [
+                    { error: 'No valid text chunks after tokenization' },
+                    false
+                ];
             }
-            
+
             // Generate embeddings
             const embeddings = await window.simpleEmbedder.generateEmbeddings(textChunks, modelName);
-            
+
             // Create documents
             const documents = textChunks.map((text, i) => ({
                 id: `text_input_${Date.now()}_${i}`,
                 text: text,
                 embedding: embeddings[i],
                 category: category || "Text Input",
-                subcategory: subcategory || "Generated", 
+                subcategory: subcategory || "Generated",
                 tags: []
             }));
-            
+
+            // Return the successful embeddings data
+            const embeddingsData = {
+                documents: documents,
+                embeddings: embeddings
+            };
+
+            console.log('✅ Embeddings generated successfully:', embeddingsData);
+
             return [
-                {
-                    documents: documents,
-                    embeddings: embeddings
-                },
-                `✅ Generated embeddings for ${documents.length} text chunks using ${modelName}`,
-                "success",
+                embeddingsData,
                 false
             ];
-            
+
         } catch (error) {
             console.error('❌ Error generating embeddings:', error);
             return [
                 { error: error.message },
-                `❌ Error: ${error.message}`,
-                "danger",
                 false
             ];
         }
     }
 };
+
 
 console.log('✅ Simple Transformers.js setup complete');
 console.log('Available functions:', Object.keys(window.dash_clientside.transformers));

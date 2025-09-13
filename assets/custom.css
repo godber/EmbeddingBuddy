@@ -1,0 +1,17 @@
+/* CSS override for transparent hover boxes in Plotly plots */
+
+/* Make hover boxes transparent while preserving text readability */
+.hovertext {
+    fill-opacity: 0.8 !important;
+    stroke-opacity: 1 !important;
+}
+
+/* Alternative selector for different Plotly versions */
+g.hovertext > path {
+    opacity: 0.8 !important;
+}
+
+/* Ensure text remains fully visible */
+.hovertext text {
+    opacity: 1 !important;
+}

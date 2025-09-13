@@ -15,7 +15,12 @@ def create_app():
     assets_path = os.path.join(project_root, "assets")
 
     app = dash.Dash(
-        __name__, external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder=assets_path
+        __name__,
+        external_stylesheets=[
+            dbc.themes.BOOTSTRAP,
+            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        ],
+        assets_folder=assets_path
     )
 
     # Allow callbacks to components that are dynamically created in tabs
@@ -45,22 +50,22 @@ def _register_client_side_callbacks(app):
             if (!nClicks || !textContent || !textContent.trim()) {
                 return window.dash_clientside.no_update;
             }
-            
+
             console.log('🔍 Checking for Transformers.js...');
             console.log('window.dash_clientside:', typeof window.dash_clientside);
             console.log('window.dash_clientside.transformers:', typeof window.dash_clientside?.transformers);
             console.log('generateEmbeddings function:', typeof window.dash_clientside?.transformers?.generateEmbeddings);
-            
-            if (typeof window.dash_clientside !== 'undefined' && 
+
+            if (typeof window.dash_clientside !== 'undefined' &&
                 typeof window.dash_clientside.transformers !== 'undefined' &&
                 typeof window.dash_clientside.transformers.generateEmbeddings === 'function') {
-                
+
                 console.log('✅ Calling Transformers.js generateEmbeddings...');
                 return window.dash_clientside.transformers.generateEmbeddings(
                     nClicks, textContent, modelName, tokenizationMethod, category, subcategory
                 );
             }
-            
+
             // More detailed error information
             let errorMsg = '❌ Transformers.js not available. ';
             if (typeof window.dash_clientside === 'undefined') {
@@ -70,21 +75,17 @@ def _register_client_side_callbacks(app):
             } else if (typeof window.dash_clientside.transformers.generateEmbeddings !== 'function') {
                 errorMsg += 'generateEmbeddings function not found.';
             }
-            
+
             console.error(errorMsg);
-            
+
             return [
                 { error: 'Transformers.js not loaded. Please refresh the page and try again.' },
-                errorMsg + ' Please refresh the page.',
-                'danger',
                 false
             ];
         }
         """,
         [
             Output("embeddings-generated-trigger", "data"),
-            Output("text-input-status-immediate", "children"),
-            Output("text-input-status-immediate", "color"),
             Output("generate-embeddings-btn", "disabled", allow_duplicate=True),
         ],
         [Input("generate-embeddings-btn", "n_clicks")],

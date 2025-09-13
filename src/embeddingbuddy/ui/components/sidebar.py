@@ -2,31 +2,26 @@ from dash import dcc, html
 import dash_bootstrap_components as dbc
 from .upload import UploadComponent
 from .datasource import DataSourceComponent
+from .textinput import TextInputComponent
 
 
 class SidebarComponent:
     def __init__(self):
         self.upload_component = UploadComponent()
         self.datasource_component = DataSourceComponent()
+        self.textinput_component = TextInputComponent()
 
     def create_layout(self):
         return dbc.Col(
             [
-                html.H5("Data Sources", className="mb-3"),
-                self.datasource_component.create_error_alert(),
-                self.datasource_component.create_success_alert(),
-                self.datasource_component.create_tabbed_interface(),
-                html.H5("Visualization Controls", className="mb-3 mt-4"),
-            ]
-            + self._create_method_dropdown()
-            + self._create_color_dropdown()
-            + self._create_dimension_toggle()
-            + self._create_prompts_toggle()
-            + [
-                html.H5("Point Details", className="mb-3"),
-                html.Div(
-                    id="point-details", children="Click on a point to see details"
-                ),
+                dbc.Accordion(
+                    [
+                        self._create_data_sources_item(),
+                        self._create_generate_embeddings_item(),
+                        self._create_visualization_controls_item(),
+                    ],
+                    always_open=True,
+                )
             ],
             width=3,
             style={"padding-right": "20px"},
@@ -86,3 +81,57 @@ class SidebarComponent:
                 style={"margin-bottom": "20px"},
             ),
         ]
+
+    def _create_generate_embeddings_item(self):
+        return dbc.AccordionItem(
+            [
+                self.textinput_component.create_text_input_interface(),
+            ],
+            title=html.Span([
+                "Generate Embeddings ",
+                html.I(
+                    className="fas fa-info-circle text-muted",
+                    style={"cursor": "pointer"},
+                    id="generate-embeddings-info-icon",
+                    title="Create new embeddings from text input using various in-browser models"
+                )
+            ]),
+            item_id="generate-embeddings-accordion",
+        )
+
+    def _create_data_sources_item(self):
+        return dbc.AccordionItem(
+            [
+                self.datasource_component.create_error_alert(),
+                self.datasource_component.create_success_alert(),
+                self.datasource_component.create_tabbed_interface(),
+            ],
+            title=html.Span([
+                "Load Embeddings ",
+                html.I(
+                    className="fas fa-info-circle text-muted",
+                    style={"cursor": "pointer"},
+                    id="load-embeddings-info-icon",
+                    title="Load existing embeddings: upload files or read from OpenSearch"
+                )
+            ]),
+            item_id="data-sources-accordion",
+        )
+
+    def _create_visualization_controls_item(self):
+        return dbc.AccordionItem(
+            self._create_method_dropdown()
+            + self._create_color_dropdown()
+            + self._create_dimension_toggle()
+            + self._create_prompts_toggle(),
+            title=html.Span([
+                "Visualization Controls ",
+                html.I(
+                    className="fas fa-info-circle text-muted",
+                    style={"cursor": "pointer"},
+                    id="visualization-controls-info-icon",
+                    title="Configure plot settings: select dimensionality reduction method, colors, and display options"
+                )
+            ]),
+            item_id="visualization-controls-accordion",
+        )

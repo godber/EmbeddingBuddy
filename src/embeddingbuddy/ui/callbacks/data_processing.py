@@ -621,6 +621,12 @@ class DataProcessingCallbacks:
             if not embeddings_data:
                 return no_update, no_update, no_update, no_update, no_update
 
+            # Check if this is a request trigger (contains textContent) vs actual embeddings data
+            if isinstance(embeddings_data, dict) and "textContent" in embeddings_data:
+                # This is a processing request trigger, not the actual results
+                # The JavaScript will handle the async processing and update the UI directly
+                return no_update, no_update, no_update, no_update, no_update
+
             processed_data = self.processor.process_client_embeddings(embeddings_data)
 
             if processed_data.error:
