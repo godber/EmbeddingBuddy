@@ -2,6 +2,9 @@
 # Stage 1: Builder
 FROM python:3.11-slim as builder
 
+# Create non-root user early in builder stage
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
 # Install system dependencies for building Python packages
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -25,6 +28,15 @@ COPY wsgi.py .
 COPY run_prod.py .
 COPY assets/ assets/
 
+# Change ownership of source files before building (lighter I/O)
+RUN chown -R appuser:appuser /app
+
+# Create and set permissions for appuser home directory (needed for uv cache)
+RUN mkdir -p /home/appuser && chown -R appuser:appuser /home/appuser
+
+# Switch to non-root user before building
+USER appuser
+
 # Create virtual environment and install dependencies (including production extras)
 RUN uv venv .venv
 RUN uv sync --frozen --extra prod 
@@ -32,23 +44,28 @@ RUN uv sync --frozen --extra prod
 # Stage 2: Runtime
 FROM python:3.11-slim as runtime
 
+# Create non-root user in runtime stage
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
 # Install runtime dependencies for compiled packages
 RUN apt-get update && apt-get install -y \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Set working directory and change ownership (small directory)
 WORKDIR /app
+RUN chown appuser:appuser /app
 
-# Copy virtual environment from builder stage
-COPY --from=builder /app/.venv /app/.venv
+# Copy files from builder with correct ownership
+COPY --from=builder --chown=appuser:appuser /app/.venv /app/.venv
+COPY --from=builder --chown=appuser:appuser /app/src /app/src
+COPY --from=builder --chown=appuser:appuser /app/main.py /app/main.py
+COPY --from=builder --chown=appuser:appuser /app/assets /app/assets
+COPY --from=builder --chown=appuser:appuser /app/wsgi.py /app/wsgi.py
+COPY --from=builder --chown=appuser:appuser /app/run_prod.py /app/run_prod.py
 
-# Copy application files from builder stage
-COPY --from=builder /app/src /app/src
-COPY --from=builder /app/main.py /app/main.py
-COPY --from=builder /app/assets /app/assets
-COPY --from=builder /app/wsgi.py /app/wsgi.py
-COPY --from=builder /app/run_prod.py /app/run_prod.py
+# Switch to non-root user
+USER appuser
 
 # Make sure the virtual environment is in PATH
 ENV PATH="/app/.venv/bin:$PATH"
@@ -64,11 +81,6 @@ ENV EMBEDDINGBUDDY_ENV=production
 
 # Expose port
 EXPOSE 8050
-
-# Create non-root user
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN chown -R appuser:appuser /app
-USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
