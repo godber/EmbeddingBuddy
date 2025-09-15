@@ -8,6 +8,16 @@ class InteractionCallbacks:
 
     def _register_callbacks(self):
         @callback(
+            Output("about-modal", "is_open"),
+            [Input("about-button", "n_clicks"), Input("about-modal-close", "n_clicks")],
+            prevent_initial_call=True,
+        )
+        def toggle_about_modal(about_clicks, close_clicks):
+            if about_clicks or close_clicks:
+                return True if about_clicks else False
+            return False
+
+        @callback(
             [
                 Output("processed-data", "data", allow_duplicate=True),
                 Output("processed-prompts", "data", allow_duplicate=True),

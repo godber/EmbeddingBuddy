@@ -1,16 +1,19 @@
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from .components.sidebar import SidebarComponent
+from .components.about import AboutComponent
 
 
 class AppLayout:
     def __init__(self):
         self.sidebar = SidebarComponent()
+        self.about = AboutComponent()
 
     def create_layout(self):
         return dbc.Container(
             [self._create_header(), self._create_main_content()]
-            + self._create_stores(),
+            + self._create_stores()
+            + [self.about.create_about_modal()],
             fluid=True,
         )
 
@@ -19,7 +22,16 @@ class AppLayout:
             [
                 dbc.Col(
                     [
-                        html.H1("EmbeddingBuddy", className="text-center mb-4"),
+                        html.Div(
+                            [
+                                html.H1("EmbeddingBuddy", className="text-center mb-4 d-inline"),
+                                html.Div(
+                                    [self.about.create_about_button()],
+                                    className="float-end"
+                                ),
+                            ],
+                            className="d-flex justify-content-between align-items-center"
+                        ),
                         # Load Transformers.js from CDN
                         html.Script(
                             """
