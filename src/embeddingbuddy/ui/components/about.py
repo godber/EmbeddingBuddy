@@ -38,20 +38,19 @@ EmbeddingBuddy is a modular Python Dash web application for interactive explorat
                     dbc.ModalTitle("About EmbeddingBuddy"),
                     close_button=True,
                 ),
-                dbc.ModalBody([
-                    dcc.Markdown(
-                        self._get_about_content(),
-                        className="mb-0"
-                    )
-                ]),
-                dbc.ModalFooter([
-                    dbc.Button(
-                        "Close",
-                        id="about-modal-close",
-                        color="secondary",
-                        n_clicks=0
-                    )
-                ]),
+                dbc.ModalBody(
+                    [dcc.Markdown(self._get_about_content(), className="mb-0")]
+                ),
+                dbc.ModalFooter(
+                    [
+                        dbc.Button(
+                            "Close",
+                            id="about-modal-close",
+                            color="secondary",
+                            n_clicks=0,
+                        )
+                    ]
+                ),
             ],
             id="about-modal",
             is_open=False,
@@ -65,5 +64,5 @@ EmbeddingBuddy is a modular Python Dash web application for interactive explorat
             color="outline-info",
             size="sm",
             n_clicks=0,
-            className="ms-2"
+            className="ms-2",
         )

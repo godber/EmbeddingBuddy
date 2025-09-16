@@ -24,13 +24,16 @@ class AppLayout:
                     [
                         html.Div(
                             [
-                                html.H1("EmbeddingBuddy", className="text-center mb-4 d-inline"),
+                                html.H1(
+                                    "EmbeddingBuddy",
+                                    className="text-center mb-4 d-inline",
+                                ),
                                 html.Div(
                                     [self.about.create_about_button()],
-                                    className="float-end"
+                                    className="float-end",
                                 ),
                             ],
-                            className="d-flex justify-content-between align-items-center"
+                            className="d-flex justify-content-between align-items-center",
                         ),
                         # Load Transformers.js from CDN
                         html.Script(

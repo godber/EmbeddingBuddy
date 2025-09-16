@@ -25,32 +25,23 @@ def create_app():
         meta_tags=[
             {
                 "name": "description",
-                "content": "Interactive embedding visualization tool for exploring high-dimensional vectors through dimensionality reduction techniques like PCA, t-SNE, and UMAP."
+                "content": "Interactive embedding visualization tool for exploring high-dimensional vectors through dimensionality reduction techniques like PCA, t-SNE, and UMAP.",
             },
-            {
-                "name": "author",
-                "content": "EmbeddingBuddy"
-            },
+            {"name": "author", "content": "EmbeddingBuddy"},
             {
                 "name": "keywords",
-                "content": "embeddings, visualization, dimensionality reduction, PCA, t-SNE, UMAP, machine learning, data science"
+                "content": "embeddings, visualization, dimensionality reduction, PCA, t-SNE, UMAP, machine learning, data science",
             },
-            {
-                "name": "viewport",
-                "content": "width=device-width, initial-scale=1.0"
-            },
+            {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
             {
                 "property": "og:title",
-                "content": "EmbeddingBuddy - Interactive Embedding Visualization"
+                "content": "EmbeddingBuddy - Interactive Embedding Visualization",
             },
             {
                 "property": "og:description",
-                "content": "Explore and visualize embedding vectors through interactive 2D/3D plots with multiple dimensionality reduction techniques."
+                "content": "Explore and visualize embedding vectors through interactive 2D/3D plots with multiple dimensionality reduction techniques.",
             },
-            {
-                "property": "og:type",
-                "content": "website"
-            }
+            {"property": "og:type", "content": "website"},
         ],
     )
 
