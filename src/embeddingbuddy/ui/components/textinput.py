@@ -16,13 +16,13 @@ class TextInputComponent:
         """Create the complete text input interface with model selection and processing options."""
         return html.Div(
             [
-                # Model selection section
-                self._create_model_selection(),
-                html.Hr(),
                 # Text input section
                 self._create_text_input_area(),
                 # Text action buttons
                 self._create_text_action_buttons(),
+                html.Hr(),
+                # Model selection section
+                self._create_model_selection(),
                 html.Hr(),
                 # Processing options
                 self._create_processing_options(),

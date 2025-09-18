@@ -82,19 +82,23 @@ class DataProcessingCallbacks:
         )
         def render_tab_content(active_tab):
             from ...ui.components.datasource import DataSourceComponent
+            from ...config.settings import AppSettings
 
             datasource = DataSourceComponent()
 
-            if active_tab == "opensearch-tab":
+            if active_tab == "opensearch-tab" and AppSettings.OPENSEARCH_ENABLED:
                 return [datasource.create_opensearch_tab()]
             elif active_tab == "text-input-tab":
                 return [datasource.create_text_input_tab()]
             else:
                 return [datasource.create_file_upload_tab()]
 
-        # Register callbacks for both data and prompts sections
-        self._register_opensearch_callbacks("data", self.opensearch_client_data)
-        self._register_opensearch_callbacks("prompts", self.opensearch_client_prompts)
+        # Register callbacks for both data and prompts sections (only if OpenSearch is enabled)
+        if AppSettings.OPENSEARCH_ENABLED:
+            self._register_opensearch_callbacks("data", self.opensearch_client_data)
+            self._register_opensearch_callbacks(
+                "prompts", self.opensearch_client_prompts
+            )
 
         # Register collapsible section callbacks
         self._register_collapse_callbacks()

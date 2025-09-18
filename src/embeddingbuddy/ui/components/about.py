@@ -5,9 +5,31 @@ import dash_bootstrap_components as dbc
 class AboutComponent:
     def _get_about_content(self):
         return """
-# 🔍 Interactive Embedding Visualization
+# 🔍 Interactive Embedding Vector Visualization
 
-EmbeddingBuddy is a modular Python Dash web application for interactive exploration and visualization of embedding vectors through dimensionality reduction techniques (PCA, t-SNE, UMAP).
+EmbeddingBuddy is a web application for interactive exploration and
+visualization of embedding vectors through dimensionality reduction techniques
+(PCA, t-SNE, UMAP).
+
+You have two ways to get started:
+
+1. Generate embeddings directly in the browser if it supports WebGPU.
+2. Upload your NDJSON file containing embedding vectors and metadata.
+
+## Generating Embeddings in Browser
+
+1. Expand the "Generate Embeddings" section.
+2. Input your text data (one entry per line).
+    1. Optionally you can use the built in sample data by clicking "Load Sample Data" button.
+3. Click "Generate Embeddings" to create vectors using a pre-trained model.
+
+## NDJSON File Format
+
+```json
+{"id": "doc_001", "embedding": [0.1, -0.3, 0.7, ...], "text": "Sample text content", "category": "news", "subcategory": "politics", "tags": ["election", "politics"]}
+{"id": "doc_002", "embedding": [0.2, -0.1, 0.9, ...], "text": "Another example", "category": "review", "subcategory": "product", "tags": ["tech", "gadget"]}
+```
+
 
 ## ✨ Features
 
@@ -35,7 +57,7 @@ EmbeddingBuddy is a modular Python Dash web application for interactive explorat
         return dbc.Modal(
             [
                 dbc.ModalHeader(
-                    dbc.ModalTitle("About EmbeddingBuddy"),
+                    dbc.ModalTitle("Welcome to EmbeddingBuddy"),
                     close_button=True,
                 ),
                 dbc.ModalBody(
@@ -53,7 +75,7 @@ EmbeddingBuddy is a modular Python Dash web application for interactive explorat
                 ),
             ],
             id="about-modal",
-            is_open=False,
+            is_open=True,
             size="lg",
         )
 
