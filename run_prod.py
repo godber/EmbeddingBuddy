@@ -13,6 +13,9 @@ def main():
     # Force production settings
     os.environ["EMBEDDINGBUDDY_ENV"] = "production"
     os.environ["EMBEDDINGBUDDY_DEBUG"] = "false"
+    # Disable OpenSearch by default in production (can be overridden by setting env var)
+    if "EMBEDDINGBUDDY_OPENSEARCH_ENABLED" not in os.environ:
+        os.environ["EMBEDDINGBUDDY_OPENSEARCH_ENABLED"] = "false"
     
     print("🚀 Starting EmbeddingBuddy in production mode...")
     print(f"⚙️  Workers: {AppSettings.GUNICORN_WORKERS}")

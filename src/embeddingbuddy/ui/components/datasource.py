@@ -1,6 +1,7 @@
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from .upload import UploadComponent
+from embeddingbuddy.config.settings import AppSettings
 
 
 class DataSourceComponent:
@@ -9,15 +10,18 @@ class DataSourceComponent:
 
     def create_tabbed_interface(self):
         """Create tabbed interface for different data sources."""
+        tabs = [dbc.Tab(label="File Upload", tab_id="file-tab")]
+
+        # Only add OpenSearch tab if enabled
+        if AppSettings.OPENSEARCH_ENABLED:
+            tabs.append(dbc.Tab(label="OpenSearch", tab_id="opensearch-tab"))
+
         return dbc.Card(
             [
                 dbc.CardHeader(
                     [
                         dbc.Tabs(
-                            [
-                                dbc.Tab(label="File Upload", tab_id="file-tab"),
-                                dbc.Tab(label="OpenSearch", tab_id="opensearch-tab"),
-                            ],
+                            tabs,
                             id="data-source-tabs",
                             active_tab="file-tab",
                         )

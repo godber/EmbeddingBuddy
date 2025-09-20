@@ -85,6 +85,9 @@ class AppSettings:
     GUNICORN_KEEPALIVE = int(os.getenv("GUNICORN_KEEPALIVE", "5"))
 
     # OpenSearch Configuration
+    OPENSEARCH_ENABLED = (
+        os.getenv("EMBEDDINGBUDDY_OPENSEARCH_ENABLED", "True").lower() == "true"
+    )
     OPENSEARCH_DEFAULT_SIZE = 100
     OPENSEARCH_SAMPLE_SIZE = 5
     OPENSEARCH_CONNECTION_TIMEOUT = 30

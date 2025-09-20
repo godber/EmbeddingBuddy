@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 from .upload import UploadComponent
 from .datasource import DataSourceComponent
 from .textinput import TextInputComponent
+from embeddingbuddy.config.settings import AppSettings
 
 
 class SidebarComponent:
@@ -102,6 +103,10 @@ class SidebarComponent:
         )
 
     def _create_data_sources_item(self):
+        tooltip_text = "Load existing embeddings: upload files"
+        if AppSettings.OPENSEARCH_ENABLED:
+            tooltip_text += " or read from OpenSearch"
+
         return dbc.AccordionItem(
             [
                 self.datasource_component.create_error_alert(),
@@ -115,7 +120,7 @@ class SidebarComponent:
                         className="fas fa-info-circle text-muted",
                         style={"cursor": "pointer"},
                         id="load-embeddings-info-icon",
-                        title="Load existing embeddings: upload files or read from OpenSearch",
+                        title=tooltip_text,
                     ),
                 ]
             ),

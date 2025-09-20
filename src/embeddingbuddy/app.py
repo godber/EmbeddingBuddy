@@ -16,11 +16,33 @@ def create_app():
 
     app = dash.Dash(
         __name__,
+        title="EmbeddingBuddy",
         external_stylesheets=[
             dbc.themes.BOOTSTRAP,
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
         ],
         assets_folder=assets_path,
+        meta_tags=[
+            {
+                "name": "description",
+                "content": "Interactive embedding visualization tool for exploring high-dimensional vectors through dimensionality reduction techniques like PCA, t-SNE, and UMAP.",
+            },
+            {"name": "author", "content": "EmbeddingBuddy"},
+            {
+                "name": "keywords",
+                "content": "embeddings, visualization, dimensionality reduction, PCA, t-SNE, UMAP, machine learning, data science",
+            },
+            {"name": "viewport", "content": "width=device-width, initial-scale=1.0"},
+            {
+                "property": "og:title",
+                "content": "EmbeddingBuddy - Interactive Embedding Visualization",
+            },
+            {
+                "property": "og:description",
+                "content": "Explore and visualize embedding vectors through interactive 2D/3D plots with multiple dimensionality reduction techniques.",
+            },
+            {"property": "og:type", "content": "website"},
+        ],
     )
 
     # Allow callbacks to components that are dynamically created in tabs
