@@ -204,6 +204,52 @@ Uses modern Python stack with uv for dependency management:
 - **Testing:** pytest for test framework
 - **Dev Tools:** uv for package management
 
+## CI/CD and Release Management
+
+### Repository Setup
+
+This project uses a **dual-repository workflow**:
+
+- **Primary repository:** Gitea instance at `git.hawt.cloud` (read-write)
+- **Mirror repository:** GitHub (read-only mirror)
+
+### Workflow Organization
+
+**Gitea Workflows (`.gitea/workflows/`):**
+- **`bump-and-release.yml`** - Manual version bumping workflow
+  - Runs `bump_version.py` to update version in `pyproject.toml`
+  - Commits changes and creates git tag
+  - Pushes to Gitea (main branch + tag)
+  - Triggered manually via workflow_dispatch with choice of patch/minor/major bump
+- **`release.yml`** - Automated release creation
+  - Triggered when version tags are pushed
+  - Runs tests, builds packages
+  - Creates Gitea release with artifacts
+- **`test.yml`** - Test suite execution
+- **`security.yml`** - Security scanning
+
+**GitHub Workflows (`.github/workflows/`):**
+- **`docker-release.yml`** - Builds and publishes Docker images
+- **`pypi-release.yml`** - Publishes packages to PyPI
+- These workflows are read-only (no git commits/pushes) and create artifacts only
+
+### Release Process
+
+1. Run manual bump workflow on Gitea: **Actions → Bump Version and Release**
+2. Select version bump type (patch/minor/major)
+3. Workflow commits version change and pushes tag to Gitea
+4. Tag push triggers `release.yml` on Gitea (creates release)
+5. GitHub mirror receives tag and triggers artifact builds (Docker, PyPI)
+
+### Version Management
+
+Use `bump_version.py` for version updates:
+```bash
+python bump_version.py patch    # 0.3.0 -> 0.3.1
+python bump_version.py minor    # 0.3.0 -> 0.4.0
+python bump_version.py major    # 0.3.0 -> 1.0.0
+```
+
 ## Development Guidelines
 
 **When adding new features:**
@@ -217,7 +263,7 @@ Uses modern Python stack with uv for dependency management:
 **Code Organization Principles:**
 
 - Single responsibility principle
-- Clear module boundaries  
+- Clear module boundaries
 - Testable, isolated components
 - Configuration over hardcoding
 - Error handling at appropriate layers

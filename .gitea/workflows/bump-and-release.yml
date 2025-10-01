@@ -1,4 +1,4 @@
-name: Create Release
+name: Bump Version and Release
 
 on:
   workflow_dispatch:
@@ -22,7 +22,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITEA_TOKEN }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,8 +40,8 @@ jobs:
 
       - name: Commit and tag
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "gitea-actions[bot]"
+          git config user.email "gitea-actions[bot]@users.noreply.gitea.io"
           git add pyproject.toml
           git commit -m "bump version to v${{ steps.bump.outputs.version }}"
           git tag v${{ steps.bump.outputs.version }}
@@ -49,13 +50,3 @@ jobs:
         run: |
           git push origin main
           git push origin v${{ steps.bump.outputs.version }}
-
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.bump.outputs.version }}
-          release_name: Release v${{ steps.bump.outputs.version }}
-          draft: false
-          prerelease: false

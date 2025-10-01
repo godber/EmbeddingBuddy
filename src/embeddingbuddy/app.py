@@ -134,6 +134,11 @@ def run_app(app=None, debug=None, host=None, port=None):
     )
 
 
-if __name__ == "__main__":
+def main():
+    """Main entry point for the embeddingbuddy CLI command."""
     app = create_app()
     run_app(app)
+
+
+if __name__ == "__main__":
+    main()

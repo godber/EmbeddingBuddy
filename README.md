@@ -28,6 +28,57 @@ documents and prompts to understand how queries relate to your content.
 - **Sidebar layout** with controls on left, large visualization area on right
 - **Real-time visualization** optimized for small to medium datasets
 
+## Quick Start
+
+### Installation
+
+**Option 1: Install with uv (recommended)**
+
+```bash
+# Install as a CLI tool (no need to clone the repo)
+uv tool install embeddingbuddy
+
+# Run the application
+embeddingbuddy
+```
+
+**Option 2: Install with pip/pipx**
+
+```bash
+# Install with pipx (isolated environment)
+pipx install embeddingbuddy
+
+# Or install with pip
+pip install embeddingbuddy
+
+# Run the application
+embeddingbuddy
+```
+
+**Option 3: Run with Docker**
+
+```bash
+# Pull and run the Docker image
+docker run -p 8050:8050 ghcr.io/godber/embedding-buddy:latest
+```
+
+The application will be available at <http://127.0.0.1:8050>
+
+### Using the Application
+
+1. **Open your browser** to <http://127.0.0.1:8050>
+2. **Upload your data**:
+   - Drag and drop an NDJSON file containing embeddings (see Data Format below)
+   - Optionally upload a second file with prompts to compare against documents
+3. **Choose visualization settings**:
+   - Select dimensionality reduction method (PCA, t-SNE, or UMAP)
+   - Choose 2D or 3D visualization
+   - Pick color coding (by category, subcategory, or tags)
+4. **Explore**:
+   - Click points to view full content
+   - Toggle prompt visibility
+   - Rotate and zoom 3D plots
+
 ## Data Format
 
 EmbeddingBuddy accepts newline-delimited JSON (NDJSON) files for both documents
