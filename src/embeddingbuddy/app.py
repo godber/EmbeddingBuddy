@@ -167,7 +167,7 @@ def serve(host=None, port=None, dev=False, debug=False):
     use_debug = dev or debug
 
     # Only print startup messages in main process (not in Flask reloader)
-    if not os.environ.get('WERKZEUG_RUN_MAIN'):
+    if not os.environ.get("WERKZEUG_RUN_MAIN"):
         mode = "development" if dev else ("debug" if debug else "production")
         print(f"Starting EmbeddingBuddy in {mode} mode...")
         print("Loading dependencies (this may take a few seconds)...")
@@ -183,18 +183,15 @@ def serve(host=None, port=None, dev=False, debug=False):
         import logging
 
         # Suppress the werkzeug warning
-        warnings.filterwarnings('ignore', message='.*development server.*')
+        warnings.filterwarnings("ignore", message=".*development server.*")
 
         # Set werkzeug logger to ERROR level to suppress the warning
-        werkzeug_logger = logging.getLogger('werkzeug')
+        werkzeug_logger = logging.getLogger("werkzeug")
         werkzeug_logger.setLevel(logging.ERROR)
 
     # Use Flask's built-in server with appropriate settings
     app.run(
-        debug=use_debug,
-        host=actual_host,
-        port=actual_port,
-        use_reloader=use_reloader
+        debug=use_debug, host=actual_host, port=actual_port, use_reloader=use_reloader
     )
 
 
@@ -205,6 +202,7 @@ def main():
     is now in embeddingbuddy.cli for faster startup.
     """
     from .cli import main as cli_main
+
     cli_main()
 
 
