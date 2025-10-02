@@ -16,9 +16,9 @@ def create_app():
     from .ui.callbacks.visualization import VisualizationCallbacks
     from .ui.callbacks.interactions import InteractionCallbacks
 
-    # Get the project root directory (two levels up from this file)
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    assets_path = os.path.join(project_root, "assets")
+    # Get the assets directory relative to this module
+    module_dir = os.path.dirname(__file__)
+    assets_path = os.path.join(module_dir, "assets")
 
     app = dash.Dash(
         __name__,
@@ -167,8 +167,15 @@ def serve(host=None, port=None, dev=False, debug=False):
 
     # Only print startup messages in main process (not in Flask reloader)
     if not os.environ.get("WERKZEUG_RUN_MAIN"):
+        from importlib.metadata import version
+
+        try:
+            pkg_version = version("embeddingbuddy")
+        except Exception:
+            pkg_version = "unknown"
+
         mode = "development" if dev else ("debug" if debug else "production")
-        print(f"Starting EmbeddingBuddy in {mode} mode...")
+        print(f"Starting EmbeddingBuddy v{pkg_version} in {mode} mode...")
         print("Loading dependencies (this may take a few seconds)...")
         print(f"Server will start at http://{actual_host}:{actual_port}")
         if use_reloader:
