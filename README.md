@@ -39,7 +39,7 @@ documents and prompts to understand how queries relate to your content.
 uv tool install embeddingbuddy
 
 # Run the application
-embeddingbuddy
+embeddingbuddy serve
 ```
 
 **Option 2: Install with pip/pipx**
@@ -124,26 +124,18 @@ uv sync
 
 2. **Run the application:**
 
-**Development mode** (with auto-reload):
-
 ```bash
-uv run run_dev.py
-```
+# Production mode (no debug, no auto-reload)
+embeddingbuddy serve
 
-**Production mode** (with Gunicorn WSGI server):
+# Development mode (debug + auto-reload on code changes)
+embeddingbuddy serve --dev
 
-```bash
-# Install production dependencies
-uv sync --extra prod
+# Debug logging only (no auto-reload)
+embeddingbuddy serve --debug
 
-# Run in production mode
-uv run run_prod.py
-```
-
-**Legacy mode** (basic Dash server):
-
-```bash
-uv run main.py
+# Custom host/port
+embeddingbuddy serve --host 0.0.0.0 --port 8080
 ```
 
 3. **Open your browser** to <http://127.0.0.1:8050>
@@ -231,10 +223,8 @@ src/embeddingbuddy/
 │       └── interactions.py    # User interaction callbacks
 └── utils/                     # Utility functions
 
-main.py            # Application runner (at project root)
-main.py            # Application runner (at project root)
-run_dev.py         # Development server runner
-run_prod.py        # Production server runner
+# CLI entry point
+embeddingbuddy serve    # Main CLI command to start the server
 ```
 
 ### Testing

@@ -69,7 +69,7 @@ class AppSettings:
     TEXT_PREVIEW_LENGTH = 100
 
     # App Configuration
-    DEBUG = os.getenv("EMBEDDINGBUDDY_DEBUG", "True").lower() == "true"
+    DEBUG = os.getenv("EMBEDDINGBUDDY_DEBUG", "False").lower() == "true"
     HOST = os.getenv("EMBEDDINGBUDDY_HOST", "127.0.0.1")
     PORT = int(os.getenv("EMBEDDINGBUDDY_PORT", "8050"))
 

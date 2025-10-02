@@ -66,8 +66,8 @@ jobs:
           echo "## Installation" >> release-notes.md
           echo "" >> release-notes.md
           echo '```bash' >> release-notes.md
-          echo 'uv sync' >> release-notes.md
-          echo 'uv run python main.py' >> release-notes.md
+          echo 'pip install embeddingbuddy' >> release-notes.md
+          echo 'embeddingbuddy serve' >> release-notes.md
           echo '```' >> release-notes.md
 
       - name: Create Release

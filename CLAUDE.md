@@ -21,29 +21,23 @@ uv sync
 
 **Run the application:**
 
-Development mode (with auto-reload):
+Using the CLI (recommended):
 
 ```bash
-uv run run_dev.py
+# Production mode (no debug, no auto-reload)
+embeddingbuddy serve
+
+# Development mode (debug + auto-reload on code changes)
+embeddingbuddy serve --dev
+
+# Debug logging only (no auto-reload)
+embeddingbuddy serve --debug
+
+# With custom host/port
+embeddingbuddy serve --host 0.0.0.0 --port 8080
 ```
 
-Production mode (with Gunicorn WSGI server):
-
-```bash
-# First install production dependencies
-uv sync --extra prod
-
-# Then run in production mode
-uv run run_prod.py
-```
-
-Legacy mode (basic Dash server):
-
-```bash
-uv run main.py
-```
-
-The app will be available at <http://127.0.0.1:8050>
+The app will be available at <http://127.0.0.1:8050> by default
 
 **Run tests:**
 

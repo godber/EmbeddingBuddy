@@ -18,7 +18,8 @@ dependencies = [
 ]
 
 [project.scripts]
-embeddingbuddy = "embeddingbuddy.app:main"
+embeddingbuddy = "embeddingbuddy.cli:main"
+embeddingbuddy-serve = "embeddingbuddy.app:serve"
 
 [project.optional-dependencies]
 test = [

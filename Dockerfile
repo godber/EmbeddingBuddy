@@ -23,9 +23,6 @@ COPY pyproject.toml uv.lock ./
 
 # Copy source code (needed for editable install)
 COPY src/ src/
-COPY main.py .
-COPY wsgi.py .
-COPY run_prod.py .
 COPY assets/ assets/
 
 # Change ownership of source files before building (lighter I/O)
@@ -59,10 +56,7 @@ RUN chown appuser:appuser /app
 # Copy files from builder with correct ownership
 COPY --from=builder --chown=appuser:appuser /app/.venv /app/.venv
 COPY --from=builder --chown=appuser:appuser /app/src /app/src
-COPY --from=builder --chown=appuser:appuser /app/main.py /app/main.py
 COPY --from=builder --chown=appuser:appuser /app/assets /app/assets
-COPY --from=builder --chown=appuser:appuser /app/wsgi.py /app/wsgi.py
-COPY --from=builder --chown=appuser:appuser /app/run_prod.py /app/run_prod.py
 
 # Switch to non-root user
 USER appuser
@@ -86,5 +80,5 @@ EXPOSE 8050
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8050/', timeout=5)" || exit 1
 
-# Run application with Gunicorn in production
-CMD ["python", "run_prod.py"]
+# Run application in production mode (no debug, no auto-reload)
+CMD ["embeddingbuddy", "serve"]

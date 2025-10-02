@@ -1,14 +1,20 @@
-import dash
-import dash_bootstrap_components as dbc
-from .config.settings import AppSettings
-from .ui.layout import AppLayout
-from .ui.callbacks.data_processing import DataProcessingCallbacks
-from .ui.callbacks.visualization import VisualizationCallbacks
-from .ui.callbacks.interactions import InteractionCallbacks
+"""
+EmbeddingBuddy application factory and server functions.
+
+This module contains the main application creation logic with imports
+moved inside functions to avoid loading heavy dependencies at module level.
+"""
 
 
 def create_app():
+    """Create and configure the Dash application instance."""
     import os
+    import dash
+    import dash_bootstrap_components as dbc
+    from .ui.layout import AppLayout
+    from .ui.callbacks.data_processing import DataProcessingCallbacks
+    from .ui.callbacks.visualization import VisualizationCallbacks
+    from .ui.callbacks.interactions import InteractionCallbacks
 
     # Get the project root directory (two levels up from this file)
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -124,6 +130,9 @@ def _register_client_side_callbacks(app):
 
 
 def run_app(app=None, debug=None, host=None, port=None):
+    """Run the Dash application with specified settings."""
+    from .config.settings import AppSettings
+
     if app is None:
         app = create_app()
 
@@ -134,10 +143,69 @@ def run_app(app=None, debug=None, host=None, port=None):
     )
 
 
-def main():
-    """Main entry point for the embeddingbuddy CLI command."""
+def serve(host=None, port=None, dev=False, debug=False):
+    """Start the EmbeddingBuddy web server.
+
+    Args:
+        host: Host to bind to (default: 127.0.0.1)
+        port: Port to bind to (default: 8050)
+        dev: Development mode - enable debug logging and auto-reload (default: False)
+        debug: Enable debug logging only, no auto-reload (default: False)
+    """
+    import os
+    from .config.settings import AppSettings
+
+    # Determine actual values to use
+    actual_host = host if host is not None else AppSettings.HOST
+    actual_port = port if port is not None else AppSettings.PORT
+
+    # Determine mode
+    # --dev takes precedence and enables both debug and auto-reload
+    # --debug enables only debug logging
+    # No flags = production mode (no debug, no auto-reload)
+    use_reloader = dev
+    use_debug = dev or debug
+
+    # Only print startup messages in main process (not in Flask reloader)
+    if not os.environ.get('WERKZEUG_RUN_MAIN'):
+        mode = "development" if dev else ("debug" if debug else "production")
+        print(f"Starting EmbeddingBuddy in {mode} mode...")
+        print("Loading dependencies (this may take a few seconds)...")
+        print(f"Server will start at http://{actual_host}:{actual_port}")
+        if use_reloader:
+            print("Auto-reload enabled - server will restart on code changes")
+
     app = create_app()
-    run_app(app)
+
+    # Suppress Flask development server warning in production mode
+    if not use_debug and not use_reloader:
+        import warnings
+        import logging
+
+        # Suppress the werkzeug warning
+        warnings.filterwarnings('ignore', message='.*development server.*')
+
+        # Set werkzeug logger to ERROR level to suppress the warning
+        werkzeug_logger = logging.getLogger('werkzeug')
+        werkzeug_logger.setLevel(logging.ERROR)
+
+    # Use Flask's built-in server with appropriate settings
+    app.run(
+        debug=use_debug,
+        host=actual_host,
+        port=actual_port,
+        use_reloader=use_reloader
+    )
+
+
+def main():
+    """Legacy entry point - redirects to cli module.
+
+    This is kept for backward compatibility but the main CLI
+    is now in embeddingbuddy.cli for faster startup.
+    """
+    from .cli import main as cli_main
+    cli_main()
 
 
 if __name__ == "__main__":
