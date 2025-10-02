@@ -660,14 +660,12 @@ class DataProcessingCallbacks:
         import os
 
         try:
-            # Get the project root directory (four levels up from this file)
+            # Get the embeddingbuddy package directory (three levels up from this file)
             current_file = os.path.abspath(__file__)
-            project_root = os.path.dirname(
-                os.path.dirname(
-                    os.path.dirname(os.path.dirname(os.path.dirname(current_file)))
-                )
+            package_dir = os.path.dirname(
+                os.path.dirname(os.path.dirname(current_file))
             )
-            sample_file_path = os.path.join(project_root, "assets", "sample-txt.md")
+            sample_file_path = os.path.join(package_dir, "assets", "sample-txt.md")
 
             if os.path.exists(sample_file_path):
                 with open(sample_file_path, "r", encoding="utf-8") as file:
