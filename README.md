@@ -28,6 +28,10 @@ documents and prompts to understand how queries relate to your content.
 - **Sidebar layout** with controls on left, large visualization area on right
 - **Real-time visualization** optimized for small to medium datasets
 
+## Network Dependency
+
+**Note:** The application loads the Transformers.js library (v3.0.0) from `cdn.jsdelivr.net` for client-side embedding generation. This requires an active internet connection and sends requests to a third-party CDN. The application will function without internet if you only use the file upload features for pre-computed embeddings.
+
 ## Quick Start
 
 ### Installation
