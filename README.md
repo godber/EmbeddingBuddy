@@ -68,6 +68,18 @@ docker run -p 8050:8050 ghcr.io/godber/embedding-buddy:latest
 
 The application will be available at <http://127.0.0.1:8050>
 
+### macOS Installation Notes
+
+If installation fails with C++ compiler or library errors (common with `opentsne`), install Xcode Command Line Tools:
+
+```bash
+# Install or update Command Line Tools
+xcode-select --install
+
+# Or reset existing installation
+sudo xcode-select --reset
+```
+
 ### Using the Application
 
 1. **Open your browser** to <http://127.0.0.1:8050>
