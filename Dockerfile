@@ -23,7 +23,6 @@ COPY pyproject.toml uv.lock ./
 
 # Copy source code (needed for editable install)
 COPY src/ src/
-COPY assets/ assets/
 
 # Change ownership of source files before building (lighter I/O)
 RUN chown -R appuser:appuser /app
@@ -56,7 +55,6 @@ RUN chown appuser:appuser /app
 # Copy files from builder with correct ownership
 COPY --from=builder --chown=appuser:appuser /app/.venv /app/.venv
 COPY --from=builder --chown=appuser:appuser /app/src /app/src
-COPY --from=builder --chown=appuser:appuser /app/assets /app/assets
 
 # Switch to non-root user
 USER appuser
