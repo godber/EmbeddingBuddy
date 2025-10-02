@@ -1,6 +1,6 @@
 [project]
 name = "embeddingbuddy"
-version = "0.6.4"
+version = "0.7.0"
 description = "A Python Dash application for interactive exploration and visualization of embedding vectors through dimensionality reduction techniques."
 readme = "README.md"
 requires-python = ">=3.11"
