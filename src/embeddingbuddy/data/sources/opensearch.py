@@ -77,7 +77,8 @@ class OpenSearchClient:
             mapping = self.client.indices.get_mapping(index=index_name)
             return True, mapping, "Mapping retrieved successfully"
         except OpenSearchException as e:
-            logger.error(f"Error getting mapping for index {index_name}: {e}")
+            safe_index_name = index_name.replace("\n", "\\n").replace("\r", "\\r")
+            logger.error(f"Error getting mapping for index {safe_index_name}: {e}")
             return False, None, f"Failed to get mapping: {str(e)}"
 
     def analyze_fields(self, index_name: str) -> Tuple[bool, Optional[Dict], str]:

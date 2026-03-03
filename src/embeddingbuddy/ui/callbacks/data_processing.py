@@ -708,7 +708,8 @@ Let the bread dough rise for at least an hour in a warm, draft-free spot."""
     @staticmethod
     def _format_error_message(error: str, filename: str | None = None) -> str:
         """Format error message with helpful guidance for users."""
-        file_part = f" in file '{filename}'" if filename else ""
+        safe_filename = filename.replace('\n', '').replace('\r', '')[:255] if filename else None
+        file_part = f" in file '{safe_filename}'" if safe_filename else ""
 
         # Check for common error patterns and provide helpful messages
         if "embedding" in error.lower() and (

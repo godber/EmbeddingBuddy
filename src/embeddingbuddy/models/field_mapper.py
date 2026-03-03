@@ -6,6 +6,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def _sanitize_for_log(value: str) -> str:
+    """Sanitize a user-controlled string for safe inclusion in log messages."""
+    return value.replace("\n", "\\n").replace("\r", "\\r")
+
+
 @dataclass
 class FieldMapping:
     """Configuration for mapping OpenSearch fields to standard format."""
@@ -194,7 +199,7 @@ class FieldMapper:
                     standard_doc["embedding"] = doc[mapping.embedding_field]
                 else:
                     logger.warning(
-                        f"Missing embedding field '{mapping.embedding_field}' in document"
+                        f"Missing embedding field '{_sanitize_for_log(mapping.embedding_field)}' in document"
                     )
                     continue
 
@@ -202,7 +207,7 @@ class FieldMapper:
                     standard_doc["text"] = str(doc[mapping.text_field])
                 else:
                     logger.warning(
-                        f"Missing text field '{mapping.text_field}' in document"
+                        f"Missing text field '{_sanitize_for_log(mapping.text_field)}' in document"
                     )
                     continue
 

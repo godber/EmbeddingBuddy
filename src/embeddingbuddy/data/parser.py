@@ -59,7 +59,7 @@ class NDJSONParser:
         for i, val in enumerate(embedding):
             if not isinstance(val, (int, float)) or val != val:  # NaN check
                 raise ValueError(
-                    f"Embedding contains invalid value at index {i}: {val}"
+                    f"Embedding contains non-numeric value at index {i}"
                 )
 
         return Document(
